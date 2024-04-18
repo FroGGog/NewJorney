@@ -30,3 +30,8 @@
 *.exe
 *.out
 *.app
+/x64/Debug
+/.vs/NewJorney
+/NewJorney.vcxproj
+/NewJorney.vcxproj.filters
+/NewJorney.vcxproj.user
