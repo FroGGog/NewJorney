@@ -1,5 +1,5 @@
 #include "gameWorld.h"
-
+#include "GameStats.h"
 
 class Game
 {
@@ -13,6 +13,8 @@ private:
 	sf::Event GameEvents;
 
 	gameWorld gWorld;
+
+	GameStats gameStats;
 
 	//gui
 	sf::RectangleShape GUIback;

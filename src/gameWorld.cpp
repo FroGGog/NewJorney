@@ -7,8 +7,6 @@ void gameWorld::fillRectsV()
 	this->worldRects.clear();
 	this->cal_x = (this->scree_size.x - 250) / this->worldMap[0].size();
 	this->cal_y = this->scree_size.y / this->worldMap.size() + 1;
-	
-	std::cout << this->worldSprites.size() << '\n';
 
 	for (auto& i : this->worldMap) {
 		for (auto& j : i) {
@@ -24,22 +22,20 @@ void gameWorld::fillRectsV()
 				//supprots window change
 				this->choosedSprite.setScale(cal_x / this->choosedTexture.getSize().x, cal_y / this->choosedTexture.getSize().y);
 			}
-			//check if player clicked on button
+			//check if player clicked on button goldmine
 			else if (this->Tshape.getGlobalBounds().intersects(this->button1.getGlobalBounds())) {
-				bool canBuild = true;
-				sf::Sprite newMine{ this->goldMineTplace };
-				newMine.setPosition(this->saved_x, this->saved_y);
-				for (auto& i : this->worldSprites) {
-					if(i.getGlobalBounds().contains(newMine.getPosition())){
-						canBuild = false;
-						break;
-					}
+				GMine temp;
+				//check if enought res to build and space is't occupied
+				if (temp.checkEnoughtRes(this->res[0], this->res[1], this->res[2]) && this->build(this->goldMineTplace)) {
+					temp.MinusCost(this->res[0], this->res[1], this->res[2]);
+					this->buildings.push_back(temp);
+					std::cout << "Build!";
+					this->CalculateIncome();
 				}
-				if (canBuild) {
-					newMine.setScale(this->cal_x / this->goldMineT.getSize().x, this->cal_y / this->goldMineT.getSize().y);
-					this->worldSprites.push_back(newMine);
-				}
-				
+			}
+			//sawmil button
+			else if (this->Tshape.getGlobalBounds().intersects(this->button2.getGlobalBounds())) {
+				this->build(this->sawmillTplace);
 			}
 			//if rect is groudn
 			if (j == "G") {
@@ -78,6 +74,11 @@ void gameWorld::fillRectsV()
 void gameWorld::initVars()
 {
 	this->clicked = false;
+
+	this->temp_incomeFood = 1;
+	this->temp_incomeGold = 1;
+	this->temp_incomeWood = 1;
+
 }
 
 void gameWorld::initTextures()
@@ -101,6 +102,48 @@ void gameWorld::initTextures()
 	if (!this->goldMineTplace.loadFromFile("src/pics/goldMinePlace.png")) {
 		std::cout << "ERROR:LOADFROMFILE::goldMinePlace.png\n";
 		return;
+	}
+
+	//sawmill
+	if (!this->sawmillT.loadFromFile("src/pics/sawmill.png")) {
+		std::cout << "ERROR:LOADFROMFILE::sawmill.png\n";
+		return;
+	}
+
+	if (!this->sawmillTplace.loadFromFile("src/pics/sawmillPlace.png")) {
+		std::cout << "ERROR:LOADFROMFILE::sawmillPlace.png\n";
+		return;
+	}
+
+	this->button2.setTexture(this->sawmillT);
+	this->button2.setPosition(1150.f, 500.f);
+
+}
+
+bool gameWorld::build(sf::Texture& _toBuild)
+{
+	bool canBuild = true;
+	sf::Sprite newBuilding{ _toBuild };
+	newBuilding.setPosition(this->saved_x, this->saved_y);
+	for (auto& sprite : this->worldSprites) {
+		if (sprite.getGlobalBounds().contains(newBuilding.getPosition())) {
+			canBuild = false;
+			break;
+		}
+	}
+	if (canBuild) {
+		newBuilding.setScale(this->cal_x / this->goldMineT.getSize().x, this->cal_y / this->goldMineT.getSize().y);
+		this->worldSprites.push_back(newBuilding);
+	}
+	return canBuild;
+}
+
+void gameWorld::CalculateIncome()
+{
+	for (auto& i : this->buildings) {
+		if (i.getType() == "g_mine") {
+			this->temp_incomeGold += 10;
+		}
 	}
 
 }
@@ -127,6 +170,20 @@ int gameWorld::getWorldEnd() const
 	return this->cal_x * this->worldMap[0].size();
 }
 
+void gameWorld::setResources(std::vector<int> _res)
+{
+	this->res = _res;
+}
+
+std::vector<int> gameWorld::getResources() const
+{
+	return this->res;
+}
+
+std::vector<int> gameWorld::getIncome() const
+{
+	return std::vector<int>{this->temp_incomeGold, this->temp_incomeWood, this->temp_incomeFood};
+}
 
 void gameWorld::update(sf::Window& window)
 {
@@ -166,7 +223,7 @@ void gameWorld::render(sf::RenderTarget& target)
 		target.draw(this->choosedSprite);
 	}
 	target.draw(this->button1);
-	
+	target.draw(this->button2);
 }
 
 

@@ -66,7 +66,15 @@ void Game::update()
 {
 	this->updateEvents();
 
+	this->gameStats.update();
+
+	this->gWorld.setResources(this->gameStats.getResources());
+
 	this->gWorld.update(*this->window);
+	
+	this->gameStats.setResources(this->gWorld.getResources());
+
+	this->gameStats.getIncome(this->gWorld.getIncome());
 
 	if (drawFirstTime) {
 		this->InitGui();
@@ -95,11 +103,14 @@ void Game::render()
 	this->window->clear();
 
 	//gui stuff
+
 	this->window->draw(this->GUIback);
 	this->window->draw(this->blackStroke);
 
 	//other stuff
 	this->gWorld.render(*this->window);
+
+	this->gameStats.render(*this->window);
 	
 	this->window->display();
 
