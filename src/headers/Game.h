@@ -1,5 +1,6 @@
 #include "gameWorld.h"
 #include "GameStats.h"
+#include "army.h"
 
 class Game
 {
@@ -15,6 +16,8 @@ private:
 	gameWorld gWorld;
 
 	GameStats gameStats;
+
+	army* tempArmy;
 
 	//gui
 	sf::RectangleShape GUIback;

@@ -8,6 +8,8 @@ void Game::InitVars()
 
 	this->drawFirstTime = true;
 
+	this->tempArmy = new army{ sf::Vector2f{28,28}, sf::Vector2f{100,100}, sf::Color::Blue };
+
 }
 
 void Game::InitWindow()

@@ -49,6 +49,9 @@ private:
 	void initVars();
 	void initTextures();
 
+	void checkButtonCollision();
+
+	//spawn sprite on clicked rect
 	bool build(sf::Texture& _toBuild);
 
 	void CalculateIncome();
@@ -61,6 +64,7 @@ private:
 public:
 
 	gameWorld();
+
 
 	void getScreenSize(sf::Vector2i _screen_size);
 	int getWorldEnd() const;

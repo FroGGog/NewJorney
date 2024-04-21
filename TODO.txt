@@ -1,0 +1,8 @@
+1) Change RectangleShape on your own class, add type for every tile
+2) Spawn army -> army got pos of dest -> check if army intersects with any road type tile ->
+if so change army pos and check if dest become lower -> if so okey
+if not get army back and try another, but always search for best solution
+3) maybe think about fortress or towers
+4) also nesseccary to create building zone for every city, so player will not buil on tile all over the map
+(maybe add some mask on rects (0,0,0, (0-255)) play with last parm in sf::Color
+5)...

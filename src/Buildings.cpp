@@ -1,8 +1,13 @@
 #include "headers/Buildings.h"
 
-Buildings::Buildings(int w_c, int g_c, int f_c, std::string _type) : wood_cost(w_c), gold_cost(g_c), food_cost(f_c), type(_type)
+Buildings::Buildings(int w_c, int g_c, int f_c, std::string _type, int _in) : wood_cost(w_c), gold_cost(g_c), food_cost(f_c), type(_type), income(_in)
 {
 
+}
+
+int Buildings::getIncome() const
+{
+	return this->income;
 }
 
 bool Buildings::checkEnoughtRes(int w, int g, int f)
@@ -26,14 +31,6 @@ std::string Buildings::getType() const
 }
 
 
-GMine::GMine() : Buildings(100, 50, 0, "g_mine")
-{
-	this->gold_income = 10;
-}
+GMine::GMine() : Buildings(50, 50, 0, "g_mine", 10) {}
 
-int GMine::getIncome() const
-{
-	return this->gold_income;
-}
-
-
+SawMill::SawMill() : Buildings(25, 100, 0, "w_mine", 10){}

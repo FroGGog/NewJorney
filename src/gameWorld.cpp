@@ -22,21 +22,7 @@ void gameWorld::fillRectsV()
 				//supprots window change
 				this->choosedSprite.setScale(cal_x / this->choosedTexture.getSize().x, cal_y / this->choosedTexture.getSize().y);
 			}
-			//check if player clicked on button goldmine
-			else if (this->Tshape.getGlobalBounds().intersects(this->button1.getGlobalBounds())) {
-				GMine temp;
-				//check if enought res to build and space is't occupied
-				if (temp.checkEnoughtRes(this->res[0], this->res[1], this->res[2]) && this->build(this->goldMineTplace)) {
-					temp.MinusCost(this->res[0], this->res[1], this->res[2]);
-					this->buildings.push_back(temp);
-					std::cout << "Build!";
-					this->CalculateIncome();
-				}
-			}
-			//sawmil button
-			else if (this->Tshape.getGlobalBounds().intersects(this->button2.getGlobalBounds())) {
-				this->build(this->sawmillTplace);
-			}
+			
 			//if rect is groudn
 			if (j == "G") {
 				temp.setFillColor(sf::Color(153,255,153,255));
@@ -120,6 +106,29 @@ void gameWorld::initTextures()
 
 }
 
+void gameWorld::checkButtonCollision()
+{
+	if (this->Tshape.getGlobalBounds().intersects(this->button1.getGlobalBounds())) {
+		GMine temp;
+		//check if enought res to build and space is't occupied
+		if (temp.checkEnoughtRes(this->res[0], this->res[1], this->res[2]) && this->build(this->goldMineTplace)) {
+			temp.MinusCost(this->res[0], this->res[1], this->res[2]);
+			this->buildings.push_back(temp);
+			std::cout << "Build!";
+			this->CalculateIncome();
+		}
+	}
+	//sawmil button
+	else if (this->Tshape.getGlobalBounds().intersects(this->button2.getGlobalBounds())) {
+		SawMill temp;
+		if (temp.checkEnoughtRes(this->res[0], this->res[1], this->res[2]) && this->build(this->sawmillTplace)) {
+			temp.MinusCost(this->res[0], this->res[1], this->res[2]);
+			this->buildings.push_back(temp);
+			this->CalculateIncome();
+		}
+	}
+}
+
 bool gameWorld::build(sf::Texture& _toBuild)
 {
 	bool canBuild = true;
@@ -140,9 +149,16 @@ bool gameWorld::build(sf::Texture& _toBuild)
 
 void gameWorld::CalculateIncome()
 {
+	this->temp_incomeFood = 0;
+	this->temp_incomeGold = 0;
+	this->temp_incomeWood = 0;
+
 	for (auto& i : this->buildings) {
 		if (i.getType() == "g_mine") {
 			this->temp_incomeGold += 10;
+		}
+		else if (i.getType() == "w_mine") {
+			this->temp_incomeWood += 10;
 		}
 	}
 
@@ -190,6 +206,8 @@ void gameWorld::update(sf::Window& window)
 	this->updateRects();
 
 	this->getOnRectClick(window);
+
+	this->checkButtonCollision();
 
 }
 
