@@ -12,7 +12,7 @@ int Buildings::getIncome() const
 
 bool Buildings::checkEnoughtRes(int w, int g, int f)
 {
-	if (w >= this->wood_cost && g >= this->gold_cost && f >= this->food_cost) {
+	if (w > this->wood_cost && g > this->gold_cost && f > this->food_cost) {
 		return true;
 	}
 	return false;
@@ -31,6 +31,7 @@ std::string Buildings::getType() const
 }
 
 
-GMine::GMine() : Buildings(50, 50, 0, "g_mine", 10) {}
+GMine::GMine() : Buildings(100, 25, 0, "g_mine", 10) {}
 
 SawMill::SawMill() : Buildings(25, 100, 0, "w_mine", 10){}
+

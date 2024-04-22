@@ -8,6 +8,7 @@ private:
 
 	int wood, gold, food;
 	int woodIncome, goldIncome, foodIncome;
+	std::map < std::string, int> resources;
 	
 	sf::Text wood_t, gold_t, food_t;
 	sf::Font mainFont;
@@ -30,8 +31,8 @@ public:
 
 	GameStats();
 
-	std::vector<int> getResources() const;
-	void setResources(std::vector<int> _res);
+	std::map<std::string, int> getResources() const;
+	void setResources(std::map < std::string, int> _res);
 	void getIncome(std::vector<int> income);
 
 	void update();

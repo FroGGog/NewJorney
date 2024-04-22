@@ -1,6 +1,7 @@
 #pragma once
 #include "../stdafx.h"
 #include "Buildings.h"
+#include "FieldRect.h"
 
 class gameWorld
 {
@@ -8,13 +9,13 @@ private:
 
 	std::vector<std::vector<std::string>> worldMap;
 
-	std::vector<sf::RectangleShape> worldRects;
+	std::vector<FieldRect* > worldRects;
 
 	std::vector<sf::Sprite> worldSprites;
 
 	std::vector<Buildings> buildings;
 
-	std::vector<int> res;
+	std::map<std::string, int> resources;
 
 	GMine mine1;
 
@@ -68,8 +69,8 @@ public:
 
 	void getScreenSize(sf::Vector2i _screen_size);
 	int getWorldEnd() const;
-	void setResources(std::vector<int> _res);
-	std::vector<int> getResources() const;
+	void setResources(std::map <std::string, int> _res);
+	std::map <std::string,int> getResources() const;
 	std::vector<int> getIncome() const;
 
 	void update(sf::Window& window);

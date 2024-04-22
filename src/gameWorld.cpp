@@ -10,42 +10,50 @@ void gameWorld::fillRectsV()
 
 	for (auto& i : this->worldMap) {
 		for (auto& j : i) {
-			sf::RectangleShape temp{ sf::Vector2f(cal_x, cal_y)};
-			temp.setPosition(temp_x, temp_y);
+			//init rectangle
+			sf::RectangleShape temp_shape{ sf::Vector2f(cal_x, cal_y) };
+			temp_shape.setPosition(temp_x, temp_y);
+
+			FieldRect* temp = new FieldRect{ temp_shape, FieldRect::NONE };
 
 			//check if player clicked on any rect in game
-			if (this->Tshape.getGlobalBounds().intersects(temp.getGlobalBounds())) {
+			if (this->Tshape.getGlobalBounds().intersects(temp->getShape().getGlobalBounds())) {
 				this->saved_type = j;
-				this->saved_x = temp.getGlobalBounds().getPosition().x;
-				this->saved_y = temp.getGlobalBounds().getPosition().y;
+				this->saved_x = temp->getShape().getGlobalBounds().getPosition().x;
+				this->saved_y = temp->getShape().getGlobalBounds().getPosition().y;
 				this->choosedSprite.setPosition(sf::Vector2f{ this->saved_x, this->saved_y });
 				//supprots window change
 				this->choosedSprite.setScale(cal_x / this->choosedTexture.getSize().x, cal_y / this->choosedTexture.getSize().y);
 			}
-			
-			//if rect is groudn
+			//if rect is ground
 			if (j == "G") {
-				temp.setFillColor(sf::Color(153,255,153,255));
+				temp->setColor(sf::Color(153, 255, 153, 255));
+				temp->setType(FieldRect::f_type::GROUND);
 			}
 			//if rect is water
 			else if (j == "W") {
-				temp.setFillColor(sf::Color(50,50, 255, 255));
+				temp->setColor(sf::Color(50, 50, 255, 255));
+				temp->setType(FieldRect::f_type::WATER);
 			}
 			//if rect is road part
 			else if (j == "R") {
-				temp.setFillColor(sf::Color(152, 126, 96, 255));
+				temp->setColor(sf::Color(152, 126, 96, 255));
+				temp->setType(FieldRect::f_type::ROAD);
 			}
 			//if rect is city
 			else if (j == "C") {
-				temp.setFillColor(sf::Color(255, 255, 102, 255));
+				temp->setColor(sf::Color(255, 255, 102, 255));
+				temp->setType(FieldRect::f_type::CITY);
 			}
 			//forest
 			else if(j == "F"){
-				temp.setFillColor(sf::Color(0, 51, 25, 255));
+				temp->setColor(sf::Color(0, 51, 25, 255));
+				temp->setType(FieldRect::f_type::FOREST);
 			}
 			//mountain
 			else if (j == "M") {
-				temp.setFillColor(sf::Color(128, 128, 128, 255));
+				temp->setColor(sf::Color(128, 128, 128, 255));
+				temp->setType(FieldRect::f_type::MOUNTAIN);
 			}
 			this->worldRects.push_back(temp);
 			temp_x += this->cal_x;
@@ -65,6 +73,12 @@ void gameWorld::initVars()
 	this->temp_incomeGold = 1;
 	this->temp_incomeWood = 1;
 
+	this->resources = {
+
+		{"gold",500},
+		{"wood",500},
+		{"food",500}
+	};
 }
 
 void gameWorld::initTextures()
@@ -108,22 +122,24 @@ void gameWorld::initTextures()
 
 void gameWorld::checkButtonCollision()
 {
+	//gold mine button
 	if (this->Tshape.getGlobalBounds().intersects(this->button1.getGlobalBounds())) {
 		GMine temp;
 		//check if enought res to build and space is't occupied
-		if (temp.checkEnoughtRes(this->res[0], this->res[1], this->res[2]) && this->build(this->goldMineTplace)) {
-			temp.MinusCost(this->res[0], this->res[1], this->res[2]);
+		if (temp.checkEnoughtRes(this->resources["wood"], this->resources["gold"], this->resources["food"]) && this->build(this->goldMineTplace)) {
+			temp.MinusCost(this->resources["gold"], this->resources["wood"], this->resources["food"]);
 			this->buildings.push_back(temp);
-			std::cout << "Build!";
+			std::cout << "Build! G";
 			this->CalculateIncome();
 		}
 	}
 	//sawmil button
 	else if (this->Tshape.getGlobalBounds().intersects(this->button2.getGlobalBounds())) {
 		SawMill temp;
-		if (temp.checkEnoughtRes(this->res[0], this->res[1], this->res[2]) && this->build(this->sawmillTplace)) {
-			temp.MinusCost(this->res[0], this->res[1], this->res[2]);
+		if (temp.checkEnoughtRes(this->resources["wood"], this->resources["gold"], this->resources["food"]) && this->build(this->sawmillTplace)) {
+			temp.MinusCost(this->resources["gold"], this->resources["wood"], this->resources["food"]);
 			this->buildings.push_back(temp);
+			std::cout << "Build! S";
 			this->CalculateIncome();
 		}
 	}
@@ -149,9 +165,9 @@ bool gameWorld::build(sf::Texture& _toBuild)
 
 void gameWorld::CalculateIncome()
 {
-	this->temp_incomeFood = 0;
-	this->temp_incomeGold = 0;
-	this->temp_incomeWood = 0;
+	this->temp_incomeFood = 1;
+	this->temp_incomeGold = 1;
+	this->temp_incomeWood = 1;
 
 	for (auto& i : this->buildings) {
 		if (i.getType() == "g_mine") {
@@ -186,14 +202,14 @@ int gameWorld::getWorldEnd() const
 	return this->cal_x * this->worldMap[0].size();
 }
 
-void gameWorld::setResources(std::vector<int> _res)
+void gameWorld::setResources(std::map<std::string, int> _res)
 {
-	this->res = _res;
+	this->resources = _res;
 }
 
-std::vector<int> gameWorld::getResources() const
+std::map <std::string, int> gameWorld::getResources() const
 {
-	return this->res;
+	return this->resources;
 }
 
 std::vector<int> gameWorld::getIncome() const
@@ -230,7 +246,7 @@ void gameWorld::render(sf::RenderTarget& target)
 {
 
 	for (auto& i : this->worldRects) {
-		target.draw(i);
+		target.draw(i->getShape());
 	}	
 
 	for (auto& i : this->worldSprites) {

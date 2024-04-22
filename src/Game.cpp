@@ -41,8 +41,6 @@ void Game::InitGui()
 }
 
 
-
-
 //public staff
 Game::Game()
 {

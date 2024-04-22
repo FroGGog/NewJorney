@@ -7,16 +7,16 @@ GameStats::GameStats() : wood(500), gold(500), food(500), woodIncome(1), goldInc
 	this->initTextures();
 }
 
-std::vector<int> GameStats::getResources() const
+std::map<std::string, int> GameStats::getResources() const
 {
-	return std::vector<int>{this->wood, this->gold, this->food};
+	return std::map<std::string, int> {{"gold", this->gold}, { "wood",this->wood }, { "food", this->food }};
 }
 
-void GameStats::setResources(std::vector<int> _res)
+void GameStats::setResources(std::map <std::string, int> _res)
 {
-	this->wood = _res[0];
-	this->gold = _res[1];
-	this->food = _res[2];
+	this->gold = _res["gold"];
+	this->wood = _res["wood"];
+	this->food = _res["food"];
 }
 
 void GameStats::getIncome(std::vector<int> income)
@@ -101,14 +101,16 @@ void GameStats::updateResources()
 {
 	this->timeToAdd = this->incomeClock.getElapsedTime();
 
-	if (this->timeToAdd.asSeconds() > 3.f) {
+	if (this->timeToAdd.asSeconds() > 2.f) {
 
 		this->incomeClock.restart();
 
 		this->food += this->foodIncome;
 		this->wood += this->woodIncome;
 		this->gold += this->goldIncome;
-
+	}
+	else {
+		return;
 	}
 
 
