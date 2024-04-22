@@ -23,7 +23,10 @@ void Game::InitWindow()
 	this->window = new sf::RenderWindow(this->vMode, "New Jorney", sf::Style::Resize | sf::Style::Close);
 	this->window->setFramerateLimit(60);
 
+	//game world stuff
 	this->gWorld.getScreenSize(sf::Vector2i(this->screen_x, this->screen_y));
+	this->gWorld.initGameField();
+	
 
 }
 
@@ -46,7 +49,7 @@ Game::Game()
 {
 	this->InitVars();
 	this->InitWindow();
-	
+	this->InitGui();
 }
 
 Game::~Game()
@@ -76,10 +79,7 @@ void Game::update()
 
 	this->gameStats.getIncome(this->gWorld.getIncome());
 
-	if (drawFirstTime) {
-		this->InitGui();
-		drawFirstTime = false;
-	}
+	
 
 }
 
@@ -102,14 +102,17 @@ void Game::render()
 {
 	this->window->clear();
 
-	//gui stuff
+	//game world
+	this->gWorld.render(*this->window);
 
+	//gui stuff
 	this->window->draw(this->GUIback);
 	this->window->draw(this->blackStroke);
 
-	//other stuff
-	this->gWorld.render(*this->window);
+	//buttons
+	this->gWorld.renderButtons(*this->window);
 
+	//other stuff
 	this->gameStats.render(*this->window);
 	
 	this->window->display();

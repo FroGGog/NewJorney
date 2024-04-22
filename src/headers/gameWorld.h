@@ -22,12 +22,12 @@ private:
 	float saved_x, saved_y;
 	float cal_x, cal_y;
 	int temp_incomeGold, temp_incomeWood, temp_incomeFood;
-	std::string saved_type;
+	bool canBuild;
 
 	//mouse check shape
 	sf::RectangleShape Tshape;
 
-	sf::Vector2i scree_size;
+	sf::Vector2i screen_size;
 
 	//gui
 	sf::Texture choosedTexture;
@@ -57,7 +57,7 @@ private:
 
 	void CalculateIncome();
 
-	void updateRects();
+	void updateTshape();
 
 	void getOnRectClick(sf::Window& window);
 
@@ -65,6 +65,7 @@ private:
 public:
 
 	gameWorld();
+	~gameWorld();
 
 
 	void getScreenSize(sf::Vector2i _screen_size);
@@ -76,6 +77,9 @@ public:
 	void update(sf::Window& window);
 
 	void render(sf::RenderTarget& target);
+	void renderButtons(sf::RenderTarget& target);
+
+	void initGameField();
 
 
 };

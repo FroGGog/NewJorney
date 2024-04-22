@@ -4,9 +4,9 @@
 void gameWorld::fillRectsV()
 {
 	int temp_x = 0, temp_y = 0;
-	this->worldRects.clear();
-	this->cal_x = (this->scree_size.x - 250) / this->worldMap[0].size();
-	this->cal_y = this->scree_size.y / this->worldMap.size() + 1;
+
+	this->cal_x = (this->screen_size.x - 250) / this->worldMap[0].size();
+	this->cal_y = this->screen_size.y / this->worldMap.size() + 1;
 
 	for (auto& i : this->worldMap) {
 		for (auto& j : i) {
@@ -17,14 +17,7 @@ void gameWorld::fillRectsV()
 			FieldRect* temp = new FieldRect{ temp_shape, FieldRect::NONE };
 
 			//check if player clicked on any rect in game
-			if (this->Tshape.getGlobalBounds().intersects(temp->getShape().getGlobalBounds())) {
-				this->saved_type = j;
-				this->saved_x = temp->getShape().getGlobalBounds().getPosition().x;
-				this->saved_y = temp->getShape().getGlobalBounds().getPosition().y;
-				this->choosedSprite.setPosition(sf::Vector2f{ this->saved_x, this->saved_y });
-				//supprots window change
-				this->choosedSprite.setScale(cal_x / this->choosedTexture.getSize().x, cal_y / this->choosedTexture.getSize().y);
-			}
+			
 			//if rect is ground
 			if (j == "G") {
 				temp->setColor(sf::Color(153, 255, 153, 255));
@@ -61,7 +54,6 @@ void gameWorld::fillRectsV()
 		temp_x = 0;
 		temp_y += this->cal_y;
 	}
-	
 	
 }
 
@@ -123,7 +115,7 @@ void gameWorld::initTextures()
 void gameWorld::checkButtonCollision()
 {
 	//gold mine button
-	if (this->Tshape.getGlobalBounds().intersects(this->button1.getGlobalBounds())) {
+	if (this->Tshape.getGlobalBounds().intersects(this->button1.getGlobalBounds()) && sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
 		GMine temp;
 		//check if enought res to build and space is't occupied
 		if (temp.checkEnoughtRes(this->resources["wood"], this->resources["gold"], this->resources["food"]) && this->build(this->goldMineTplace)) {
@@ -134,8 +126,9 @@ void gameWorld::checkButtonCollision()
 		}
 	}
 	//sawmil button
-	else if (this->Tshape.getGlobalBounds().intersects(this->button2.getGlobalBounds())) {
+	else if (this->Tshape.getGlobalBounds().intersects(this->button2.getGlobalBounds()) && sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
 		SawMill temp;
+
 		if (temp.checkEnoughtRes(this->resources["wood"], this->resources["gold"], this->resources["food"]) && this->build(this->sawmillTplace)) {
 			temp.MinusCost(this->resources["gold"], this->resources["wood"], this->resources["food"]);
 			this->buildings.push_back(temp);
@@ -150,17 +143,26 @@ bool gameWorld::build(sf::Texture& _toBuild)
 	bool canBuild = true;
 	sf::Sprite newBuilding{ _toBuild };
 	newBuilding.setPosition(this->saved_x, this->saved_y);
+	//if player tryies to build on same spot multiple time
 	for (auto& sprite : this->worldSprites) {
 		if (sprite.getGlobalBounds().contains(newBuilding.getPosition())) {
-			canBuild = false;
-			break;
+			return false;
 		}
 	}
-	if (canBuild) {
-		newBuilding.setScale(this->cal_x / this->goldMineT.getSize().x, this->cal_y / this->goldMineT.getSize().y);
-		this->worldSprites.push_back(newBuilding);
+	//if player tryies to build on road or on city 
+	for (auto& i : this->worldRects) {
+		FieldRect::f_type tempType = i->getType();
+		if (tempType == FieldRect::f_type::CITY || tempType == FieldRect::f_type::ROAD || tempType == FieldRect::f_type::WATER) {
+			if (this->saved_x == i->getShape().getPosition().x && this->saved_y == i->getShape().getPosition().y) {
+				std::cout << this->saved_x << '\n';
+				return false;
+			}
+		}
 	}
-	return canBuild;
+	//if all is ok build structure
+	newBuilding.setScale(this->cal_x / this->goldMineT.getSize().x, this->cal_y / this->goldMineT.getSize().y);
+	this->worldSprites.push_back(newBuilding);
+	return true;
 }
 
 void gameWorld::CalculateIncome()
@@ -192,9 +194,17 @@ gameWorld::gameWorld()
 
 }
 
+gameWorld::~gameWorld()
+{
+	for (auto& i : this->worldRects) {
+		delete i;
+		i = nullptr;
+	}
+}
+
 void gameWorld::getScreenSize(sf::Vector2i _screen_size)
 {
-	this->scree_size = _screen_size;
+	this->screen_size = _screen_size;
 }
 
 int gameWorld::getWorldEnd() const
@@ -219,7 +229,7 @@ std::vector<int> gameWorld::getIncome() const
 
 void gameWorld::update(sf::Window& window)
 {
-	this->updateRects();
+	this->updateTshape();
 
 	this->getOnRectClick(window);
 
@@ -227,9 +237,18 @@ void gameWorld::update(sf::Window& window)
 
 }
 
-void gameWorld::updateRects()
+
+void gameWorld::updateTshape()
 {
-	this->fillRectsV();
+	for (auto i : this->worldRects) {
+		if (this->Tshape.getGlobalBounds().intersects(i->getShape().getGlobalBounds())) {
+			this->saved_x = i->getShape().getGlobalBounds().getPosition().x;
+			this->saved_y = i->getShape().getGlobalBounds().getPosition().y;
+			this->choosedSprite.setPosition(sf::Vector2f{ this->saved_x, this->saved_y });
+			//supprots window change
+			this->choosedSprite.setScale(this->cal_x / this->choosedTexture.getSize().x, this->cal_y / this->choosedTexture.getSize().y);
+		}
+	}
 }
 
 void gameWorld::getOnRectClick(sf::Window& window)
@@ -256,8 +275,18 @@ void gameWorld::render(sf::RenderTarget& target)
 	if (clicked) {
 		target.draw(this->choosedSprite);
 	}
+	
+}
+
+void gameWorld::renderButtons(sf::RenderTarget& target)
+{
 	target.draw(this->button1);
 	target.draw(this->button2);
+}
+
+void gameWorld::initGameField()
+{
+	this->fillRectsV();
 }
 
 

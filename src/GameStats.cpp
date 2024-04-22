@@ -101,7 +101,7 @@ void GameStats::updateResources()
 {
 	this->timeToAdd = this->incomeClock.getElapsedTime();
 
-	if (this->timeToAdd.asSeconds() > 2.f) {
+	if (this->timeToAdd.asSeconds() > 0.1f) {
 
 		this->incomeClock.restart();
 
