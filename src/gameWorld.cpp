@@ -5,6 +5,8 @@ void gameWorld::fillRectsV()
 {
 	int temp_x = 0, temp_y = 0;
 
+	this->worldRects.clear();
+
 	this->cal_x = (this->screen_size.x - 250) / this->worldMap[0].size();
 	this->cal_y = this->screen_size.y / this->worldMap.size() + 1;
 
@@ -121,7 +123,6 @@ void gameWorld::checkButtonCollision()
 		if (temp.checkEnoughtRes(this->resources["wood"], this->resources["gold"], this->resources["food"]) && this->build(this->goldMineTplace)) {
 			temp.MinusCost(this->resources["gold"], this->resources["wood"], this->resources["food"]);
 			this->buildings.push_back(temp);
-			std::cout << "Build! G";
 			this->CalculateIncome();
 		}
 	}
@@ -132,7 +133,6 @@ void gameWorld::checkButtonCollision()
 		if (temp.checkEnoughtRes(this->resources["wood"], this->resources["gold"], this->resources["food"]) && this->build(this->sawmillTplace)) {
 			temp.MinusCost(this->resources["gold"], this->resources["wood"], this->resources["food"]);
 			this->buildings.push_back(temp);
-			std::cout << "Build! S";
 			this->CalculateIncome();
 		}
 	}
@@ -154,7 +154,6 @@ bool gameWorld::build(sf::Texture& _toBuild)
 		FieldRect::f_type tempType = i->getType();
 		if (tempType == FieldRect::f_type::CITY || tempType == FieldRect::f_type::ROAD || tempType == FieldRect::f_type::WATER) {
 			if (this->saved_x == i->getShape().getPosition().x && this->saved_y == i->getShape().getPosition().y) {
-				std::cout << this->saved_x << '\n';
 				return false;
 			}
 		}
@@ -227,6 +226,28 @@ std::vector<int> gameWorld::getIncome() const
 	return std::vector<int>{this->temp_incomeGold, this->temp_incomeWood, this->temp_incomeFood};
 }
 
+std::vector<FieldRect*> gameWorld::cityRects() const
+{
+	std::vector<FieldRect* > cityRects;
+	for (auto& i : this->worldRects) {
+		if (i->getType() == FieldRect::CITY) {
+			cityRects.push_back(i);
+		}
+	}
+	return cityRects;
+}
+
+std::vector<FieldRect*> gameWorld::roadRects() const
+{
+	std::vector<FieldRect* > roadRects;
+	for (auto& i : this->worldRects) {
+		if (i->getType() == FieldRect::ROAD) {
+			roadRects.push_back(i);
+		}
+	}
+	return roadRects;
+}
+
 void gameWorld::update(sf::Window& window)
 {
 	this->updateTshape();
@@ -234,6 +255,14 @@ void gameWorld::update(sf::Window& window)
 	this->getOnRectClick(window);
 
 	this->checkButtonCollision();
+
+	if (print) {
+		for (auto& i : this->worldRects) {
+			std::cout << i->getShape().getGlobalBounds().getPosition().x << '\n';
+		}
+		print = false;
+	}
+	
 
 }
 
@@ -298,7 +327,7 @@ void gameWorld::initWorldMap()
 		{"G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","W","W","W","W","W",},
 		{"G","G","G","G","G","G","G","G","F","F","F","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","W","W","W","W","W","W",},
 		{"G","G","G","G","F","F","F","F","F","R","R","R","G","G","G","G","G","G","G","G","G","G","G","G","R","R","R","R","R","G","G","C","G","G","G","W","W","W","W","W",},
-		{"G","G","G","C","R","R","R","R","R","R","F","R","G","G","G","G","G","G","G","G","G","G","R","R","R","G","G","G","R","G","G","R","G","G","G","G","W","W","W","W",},
+		{"G","G","G","C","R","R","R","R","R","R","F","R","G","G","G","G","G","G","G","G","G","R","R","R","R","R","G","G","R","G","G","R","G","G","G","G","W","W","W","W",},
 		{"G","G","G","R","G","F","F","F","F","F","F","R","R","R","R","R","R","R","R","R","R","R","R","G","G","G","G","G","R","G","R","R","G","G","G","G","W","W","W","W",},
 		{"G","G","R","R","G","F","F","F","F","F","F","R","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","R","R","R","R","R","G","G","G","G","W","W","W",},
 		{"G","G","R","G","G","F","F","F","F","F","F","R","R","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","R","G","G","G","W","W","W","W",},

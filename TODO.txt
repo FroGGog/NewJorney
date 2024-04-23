@@ -1,7 +1,4 @@
-1) Spawn army -> army got pos of dest -> check if army intersects with any road type tile ->
-if so change army pos and check if dest become lower -> if so okey
-if not get army back and try another, but always search for best solution
-2) maybe think about fortress or towers
-3) also nesseccary to create building zone for every city, so player will not buil on tile all over the map
+1) maybe think about fortress or towers
+2) also nesseccary to create building zone for every city, so player will not buil on tile all over the map
 (maybe add some mask on rects (0,0,0, (0-255)) play with last parm in sf::Color
-4)...
+3)Fix army bug - they don't want to go up...

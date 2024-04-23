@@ -8,7 +8,9 @@ void Game::InitVars()
 
 	this->drawFirstTime = true;
 
-	this->tempArmy = new army{ sf::Vector2f{28,28}, sf::Vector2f{100,100}, sf::Color::Blue };
+	//775 y 50 city dest pos
+	// road start pos 225 50
+	this->tempArmy = new army{ sf::Vector2f{25.1,25.1}, sf::Vector2f{225,50}, sf::Color::Blue, sf::Vector2f{775, 50} };
 
 }
 
@@ -56,6 +58,8 @@ Game::~Game()
 {
 	delete this->window;
 
+	delete this->tempArmy;
+
 }
 
 const bool Game::windowOpen() const
@@ -79,8 +83,7 @@ void Game::update()
 
 	this->gameStats.getIncome(this->gWorld.getIncome());
 
-	
-
+	this->tempArmy->update(this->gWorld.roadRects());
 }
 
 void Game::updateEvents()
@@ -105,12 +108,15 @@ void Game::render()
 	//game world
 	this->gWorld.render(*this->window);
 
+	//armies
+	this->tempArmy->render(*this->window);
+
 	//gui stuff
 	this->window->draw(this->GUIback);
 	this->window->draw(this->blackStroke);
 
 	//buttons
-	this->gWorld.renderButtons(*this->window);
+	this->gWorld.renderButtons(*this->window);  
 
 	//other stuff
 	this->gameStats.render(*this->window);

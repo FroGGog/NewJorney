@@ -43,6 +43,7 @@ private:
 	sf::Sprite button2;
 
 	bool clicked;
+	bool print;
 
 	void fillRectsV();
 
@@ -73,6 +74,9 @@ public:
 	void setResources(std::map <std::string, int> _res);
 	std::map <std::string,int> getResources() const;
 	std::vector<int> getIncome() const;
+
+	std::vector<FieldRect*> cityRects() const;
+	std::vector<FieldRect*> roadRects() const;
 
 	void update(sf::Window& window);
 
