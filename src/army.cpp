@@ -11,9 +11,6 @@ army::army(sf::Vector2f size, sf::Vector2f start_pos, sf::Color _color, sf::Vect
 
 	this->state = ATTACK;
 
-	this->lastElem = false;
-	this->counter = 0;
-
 	this->distance = sqrt(pow(int(this->dest.x - start_pos.x), 2) - pow(int(this->dest.y - start_pos.y), 2));
 
 }
@@ -30,10 +27,15 @@ void army::update(std::vector<FieldRect*> _roads)
 {
 
 	if (this->state == status::ATTACK) {
-
 		this->updatePos(_roads);
 	}
 
+}
+
+int army::getDistance(sf::Vector2f _newPos)
+{
+	int tempDist = sqrt(pow(abs(int(this->shape->getPosition().x - _newPos.x)), 2) - pow(abs(int(this->shape->getPosition().y - _newPos.y)), 2));
+	return tempDist;
 }
 
 bool army::updateDistance(sf::Vector2f _newPos)
@@ -48,28 +50,51 @@ bool army::updateDistance(sf::Vector2f _newPos)
 
 void army::updatePos(std::vector<FieldRect*> _roads)
 {
+	this->savedDistance = this->distance;
 	if (this->shape->getPosition() == this->dest) {
+		this->shape->setPosition(this->dest);
+		this->state = status::IDLE;
+		std::cout << "ONPLACE\n";
 		return;
 	}
-	this->moveTime = this->armyMove.getElapsedTime();
 
-	if (this->moveTime.asSeconds() > .5f) {
-		std::cout << this->distance << '\n';
+	std::vector<FieldRect*> s_roads;
+	FieldRect* shortesDist = nullptr;
+	this->moveTime = this->armyMove.getElapsedTime();
+	int counter = 0;
+
+	if (this->moveTime.asSeconds() > 0.5f) {
 		for (auto& i : _roads) {
-			if (i->getShape().getPosition() != this->shape->getPosition()) {
-				if (this->shape->getGlobalBounds().intersects(i->getShape().getGlobalBounds())) {
-					if (this->updateDistance(i->getShape().getPosition())) {
-						this->shape->setPosition(i->getShape().getPosition());
-						break;
-					}
-					else {
-						this->shape->setPosition(sf::Vector2f{ i->getShape().getPosition().x, i->getShape().getPosition().y - 25 });
-					}
-				}	
+			if (this->shape->getPosition() == i->getShape().getPosition()) {
+				s_roads.push_back(i);
+				continue;
+			}
+			int tempDist = getDistance(i->getShape().getPosition());
+			if (tempDist <= 25 && tempDist > 0) {
+				s_roads.push_back(i);
 			}
 		}
-		this->armyMove.restart();
 
+		for (int i{ 0 }; i < s_roads.size(); i++) {
+
+			if (this->shape->getPosition() == s_roads[i]->getShape().getPosition()) {
+				if (i == s_roads.size() - 1) {
+					this->shape->setPosition(s_roads[i - 1]->getShape().getPosition());
+					break;
+				}
+				std::cout << "GOT\n";
+				this->shape->setPosition(s_roads[i + 1]->getShape().getPosition());
+				break;
+			}
+
+		}
+
+		this->armyMove.restart();
+	}
+
+
+	for (auto& i : s_roads) {
+		i = nullptr;
 	}
 	
 	

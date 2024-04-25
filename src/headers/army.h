@@ -20,15 +20,16 @@ private:
 	sf::Clock armyMove;
 	sf::Time moveTime;
 
-	bool lastElem;
-	int counter;
-
 	std::vector<std::vector<std::string>> surrond;
 
 	status state;
 
 	//distance between army and city
 	int distance;
+	int savedDistance; //distance after player moved
+	bool inDistancePoint;
+
+	int getDistance(sf::Vector2f _newPos);
 
 	bool updateDistance(sf::Vector2f _newPos);
 	void updatePos(std::vector<FieldRect*> _roads);

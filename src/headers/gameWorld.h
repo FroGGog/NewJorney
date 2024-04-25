@@ -75,7 +75,7 @@ public:
 	std::map <std::string,int> getResources() const;
 	std::vector<int> getIncome() const;
 
-	std::vector<FieldRect*> cityRects() const;
+	//get all road and city rects from worldRects
 	std::vector<FieldRect*> roadRects() const;
 
 	void update(sf::Window& window);

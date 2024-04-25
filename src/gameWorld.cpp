@@ -226,22 +226,11 @@ std::vector<int> gameWorld::getIncome() const
 	return std::vector<int>{this->temp_incomeGold, this->temp_incomeWood, this->temp_incomeFood};
 }
 
-std::vector<FieldRect*> gameWorld::cityRects() const
-{
-	std::vector<FieldRect* > cityRects;
-	for (auto& i : this->worldRects) {
-		if (i->getType() == FieldRect::CITY) {
-			cityRects.push_back(i);
-		}
-	}
-	return cityRects;
-}
-
 std::vector<FieldRect*> gameWorld::roadRects() const
 {
 	std::vector<FieldRect* > roadRects;
 	for (auto& i : this->worldRects) {
-		if (i->getType() == FieldRect::ROAD) {
+		if (i->getType() == FieldRect::ROAD || i->getType() == FieldRect::CITY) {
 			roadRects.push_back(i);
 		}
 	}
@@ -325,13 +314,13 @@ void gameWorld::initWorldMap()
 	this->worldMap = {
 
 		{"G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","W","W","W","W","W",},
-		{"G","G","G","G","G","G","G","G","F","F","F","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","W","W","W","W","W","W",},
-		{"G","G","G","G","F","F","F","F","F","R","R","R","G","G","G","G","G","G","G","G","G","G","G","G","R","R","R","R","R","G","G","C","G","G","G","W","W","W","W","W",},
+		{"G","G","G","G","G","G","G","G","F","F","F","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","C","G","G","W","W","W","W","W","W",},
+		{"G","G","G","G","F","F","F","F","F","R","R","R","G","G","G","G","G","G","G","G","G","G","G","G","R","R","R","R","R","G","G","R","G","G","G","W","W","W","W","W",},
 		{"G","G","G","C","R","R","R","R","R","R","F","R","G","G","G","G","G","G","G","G","G","R","R","R","R","R","G","G","R","G","G","R","G","G","G","G","W","W","W","W",},
-		{"G","G","G","R","G","F","F","F","F","F","F","R","R","R","R","R","R","R","R","R","R","R","R","G","G","G","G","G","R","G","R","R","G","G","G","G","W","W","W","W",},
-		{"G","G","R","R","G","F","F","F","F","F","F","R","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","R","R","R","R","R","G","G","G","G","W","W","W",},
-		{"G","G","R","G","G","F","F","F","F","F","F","R","R","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","R","G","G","G","W","W","W","W",},
-		{"G","G","R","G","G","F","F","F","G","G","G","G","R","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","R","G","G","G","W","W","W","W",},
+		{"G","G","G","R","G","F","F","F","F","F","F","R","R","R","R","R","R","R","R","R","R","R","R","G","G","G","G","G","R","G","G","R","G","G","G","G","W","W","W","W",},
+		{"G","G","R","R","G","F","F","F","F","F","F","R","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","R","R","G","R","R","G","G","G","G","W","W","W",},
+		{"G","G","R","G","G","F","F","F","F","F","F","R","R","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","R","G","R","R","G","G","G","W","W","W","W",},
+		{"G","G","R","G","G","F","F","F","G","G","G","G","R","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","R","R","R","R","G","G","G","W","W","W","W",},
 		{"G","G","R","G","G","G","F","F","G","G","G","G","R","R","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","R","R","G","W","W","G","W","W",},
 		{"F","G","R","R","G","G","G","G","G","G","G","G","G","R","R","R","R","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","W","R","W","W","G","G","G","G",},
 		{"F","F","G","R","G","G","G","G","G","G","G","G","G","G","G","G","R","R","G","G","G","G","G","G","G","G","G","G","G","W","W","W","W","R","R","W","G","G","G","G",},
