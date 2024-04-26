@@ -2,10 +2,16 @@
 
 ## New Jorney is my first attemp of creating  my own game.  
 I'm using SFML and STL as main project libraries  
-The main idea is simple - strategic. Build barrack, farms, mines  
+The main idea is simple - tower defence. Build barrack, farms, mines  
 or sawmill, create armies and attack your opponets.
 
 ## Updates  
+### v 1.0.2
+- Changed game genre - now tower defence
+- Recreate game map
+- Created turn points
+- Now enemies or our units can go by roads
+
 ### v 1.0.1
 - Fixed income bugs
 - Added field rect class (so now it's easy to check rect type)
