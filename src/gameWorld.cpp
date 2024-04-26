@@ -50,6 +50,31 @@ void gameWorld::fillRectsV()
 				temp->setColor(sf::Color(128, 128, 128, 255));
 				temp->setType(FieldRect::f_type::MOUNTAIN);
 			}
+			//right turn road
+			else if (j == "RTR") {
+				temp->setColor(sf::Color(152, 126, 96, 255));
+				temp->setType(FieldRect::f_type::ROAD);
+				temp->setTurnType(FieldRect::turn_type::RIGHT);
+			}
+			//left turn road
+			else if (j == "RTL") {
+				temp->setColor(sf::Color(152, 126, 96, 255));
+				temp->setType(FieldRect::f_type::ROAD);
+				temp->setTurnType(FieldRect::turn_type::LEFT);
+			}
+			//up turn road
+			else if (j == "RTD") {
+				temp->setColor(sf::Color(152, 126, 96, 255));
+				temp->setType(FieldRect::f_type::ROAD);
+				temp->setTurnType(FieldRect::turn_type::DOWN);
+			}
+			//down turn road
+			else if (j == "RTU") {
+				temp->setColor(sf::Color(152, 126, 96, 255));
+				temp->setType(FieldRect::f_type::ROAD);
+				temp->setTurnType(FieldRect::turn_type::UP);
+			}
+
 			this->worldRects.push_back(temp);
 			temp_x += this->cal_x;
 		}
@@ -230,7 +255,11 @@ std::vector<FieldRect*> gameWorld::roadRects() const
 {
 	std::vector<FieldRect* > roadRects;
 	for (auto& i : this->worldRects) {
-		if (i->getType() == FieldRect::ROAD || i->getType() == FieldRect::CITY) {
+		//if it's turn road add it to vector
+		if (i->getTurn() == FieldRect::turn_type::NONETURN) {
+			continue;
+		}
+		else {
 			roadRects.push_back(i);
 		}
 	}
@@ -244,13 +273,6 @@ void gameWorld::update(sf::Window& window)
 	this->getOnRectClick(window);
 
 	this->checkButtonCollision();
-
-	if (print) {
-		for (auto& i : this->worldRects) {
-			std::cout << i->getShape().getGlobalBounds().getPosition().x << '\n';
-		}
-		print = false;
-	}
 	
 
 }
@@ -260,6 +282,7 @@ void gameWorld::updateTshape()
 {
 	for (auto i : this->worldRects) {
 		if (this->Tshape.getGlobalBounds().intersects(i->getShape().getGlobalBounds())) {
+			//std::cout << this->choosedSprite.getPosition().x << ' ' << this->choosedSprite.getPosition().y << '\n';
 			this->saved_x = i->getShape().getGlobalBounds().getPosition().x;
 			this->saved_y = i->getShape().getGlobalBounds().getPosition().y;
 			this->choosedSprite.setPosition(sf::Vector2f{ this->saved_x, this->saved_y });
@@ -267,6 +290,7 @@ void gameWorld::updateTshape()
 			this->choosedSprite.setScale(this->cal_x / this->choosedTexture.getSize().x, this->cal_y / this->choosedTexture.getSize().y);
 		}
 	}
+	
 }
 
 void gameWorld::getOnRectClick(sf::Window& window)
@@ -284,6 +308,7 @@ void gameWorld::render(sf::RenderTarget& target)
 
 	for (auto& i : this->worldRects) {
 		target.draw(i->getShape());
+		
 	}	
 
 	for (auto& i : this->worldSprites) {
@@ -313,34 +338,33 @@ void gameWorld::initWorldMap()
 	//G - ground
 	this->worldMap = {
 
-		{"G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","W","W","W","W","W",},
-		{"G","G","G","G","G","G","G","G","F","F","F","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","C","G","G","W","W","W","W","W","W",},
-		{"G","G","G","G","F","F","F","F","F","R","R","R","G","G","G","G","G","G","G","G","G","G","G","G","R","R","R","R","R","G","G","R","G","G","G","W","W","W","W","W",},
-		{"G","G","G","C","R","R","R","R","R","R","F","R","G","G","G","G","G","G","G","G","G","R","R","R","R","R","G","G","R","G","G","R","G","G","G","G","W","W","W","W",},
-		{"G","G","G","R","G","F","F","F","F","F","F","R","R","R","R","R","R","R","R","R","R","R","R","G","G","G","G","G","R","G","G","R","G","G","G","G","W","W","W","W",},
-		{"G","G","R","R","G","F","F","F","F","F","F","R","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","R","R","G","R","R","G","G","G","G","W","W","W",},
-		{"G","G","R","G","G","F","F","F","F","F","F","R","R","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","R","G","R","R","G","G","G","W","W","W","W",},
-		{"G","G","R","G","G","F","F","F","G","G","G","G","R","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","R","R","R","R","G","G","G","W","W","W","W",},
-		{"G","G","R","G","G","G","F","F","G","G","G","G","R","R","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","R","R","G","W","W","G","W","W",},
-		{"F","G","R","R","G","G","G","G","G","G","G","G","G","R","R","R","R","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","W","R","W","W","G","G","G","G",},
-		{"F","F","G","R","G","G","G","G","G","G","G","G","G","G","G","G","R","R","G","G","G","G","G","G","G","G","G","G","G","W","W","W","W","R","R","W","G","G","G","G",},
-		{"F","F","G","R","G","G","G","G","G","G","G","G","G","G","G","G","G","R","R","G","G","G","G","G","G","G","G","G","W","W","W","W","G","G","R","G","G","G","G","G",},
-		{"F","F","G","R","R","G","G","G","G","G","G","G","G","G","G","G","G","G","R","R","C","G","F","F","G","G","G","G","W","W","G","G","G","G","R","R","G","G","G","G",},
-		{"F","F","F","G","R","G","G","G","G","G","G","G","G","G","G","F","G","G","G","G","G","G","F","F","G","G","G","W","W","G","G","G","G","G","G","R","R","G","G","G",},
-		{"F","F","F","G","R","G","G","G","G","G","G","G","G","G","F","F","F","G","F","F","F","F","F","F","G","G","W","W","W","G","G","G","G","G","G","G","R","G","G","G",},
-		{"F","F","F","G","R","G","G","G","G","G","G","G","G","G","F","F","F","G","F","F","F","F","F","F","G","G","W","W","G","G","G","G","G","G","G","G","R","G","G","M",},
-		{"F","F","F","G","R","R","G","G","G","G","G","G","G","F","F","F","F","G","F","F","F","F","F","G","G","W","W","G","G","G","G","G","G","G","G","G","R","G","M","M",},
-		{"F","F","F","G","G","R","G","G","G","G","G","G","G","F","F","F","F","F","F","F","F","F","F","W","W","W","W","G","G","G","G","G","G","G","G","G","R","G","M","M",},
-		{"F","F","F","F","G","R","R","G","G","G","G","G","G","F","F","F","F","F","F","F","F","G","W","W","W","G","G","G","M","G","G","G","G","G","G","G","R","G","M","M",},
-		{"F","F","F","F","G","G","R","G","G","G","G","G","G","F","F","F","F","F","F","F","F","G","W","W","G","G","G","M","M","M","G","G","G","G","G","G","R","G","M","M",},
-		{"F","F","F","F","F","G","R","G","G","G","G","G","G","F","F","F","F","F","F","G","W","W","W","G","G","G","G","M","M","M","G","G","G","G","G","G","R","M","M","M",},
-		{"F","F","F","F","F","G","R","R","G","G","G","G","G","G","F","F","F","F","G","G","W","W","W","G","G","G","G","M","M","M","G","G","G","G","G","G","R","M","M","M",},
-		{"F","F","F","F","F","G","G","R","W","W","W","G","G","G","G","G","G","G","G","W","W","G","G","G","G","G","M","M","M","M","M","G","G","G","G","G","R","M","M","M",},
-		{"F","F","F","F","F","F","G","C","W","W","W","W","G","G","G","G","G","G","W","W","W","G","G","G","G","M","M","G","M","M","M","G","G","G","M","M","R","M","M","M",},
-		{"F","F","F","F","F","F","G","W","W","W","W","W","W","G","G","G","W","W","W","W","G","G","G","G","G","M","M","G","G","G","M","M","G","G","M","M","R","M","M","M",},
-		{"F","F","F","F","F","G","G","W","W","W","W","W","W","W","G","W","W","W","G","G","G","G","G","G","M","M","G","G","G","G","G","M","G","M","M","M","C","M","M","M",},
-		{"F","F","F","F","G","G","W","W","W","W","W","W","W","W","W","W","G","G","G","G","G","G","G","M","M","M","G","G","G","G","G","M","M","M","M","M","M","M","M","M",},
-		{"F","F","F","F","G","W","W","W","W","W","W","W","W","W","W","W","G","G","G","G","G","G","G","M","M","M","G","G","M","M","M","M","M","M","M","M","M","M","M","M",},
-		{"F","F","F","F","G","W","W","W","W","W","W","W","W","W","W","W","W","W","G","G","G","G","G","G","G","G","G","M","M","M","M","M","M","M","M","M","M","M","M","M",}
+		{"G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","M","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G",},
+		{"G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","M","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G",},
+		{"G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","M","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G",},
+		{"G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","M","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G",},
+		{"G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","M","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G",},
+		{"G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","M","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G",},
+		{"G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","M","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G",},
+		{"G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","M","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G",},
+		{"G","G","G","G","RTR","R","R","R","R","R","R","R","R","R","R","R","R","R","RTD","M","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G",},
+		{"G","G","G","G","R","G","G","G","G","G","G","G","G","G","G","G","G","G","R","M","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G",},
+		{"G","G","G","G","RTU","R","RTL","G","G","G","G","G","G","G","G","G","G","G","R","M","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G",},
+		{"G","G","G","G","G","G","R","G","G","G","G","G","G","G","G","G","G","G","R","M","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G",},
+		{"G","G","G","G","G","G","R","G","G","G","G","G","G","G","G","G","G","G","R","M","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G",},
+		{"G","G","G","G","G","RTR","RTU","G","G","G","G","G","G","G","G","G","G","G","R","M","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G",},
+		{"G","C","R","G","G","R","G","G","G","G","G","G","G","G","G","G","G","G","RTR","R","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","C","G",},
+		{"G","G","R","G","G","R","G","G","G","G","G","G","G","G","G","G","G","G","G","M","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G",},
+		{"G","G","RTR","R","R","RTU","G","G","G","G","G","G","G","G","G","G","G","G","G","M","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G",},
+		{"G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","M","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G",},
+		{"G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","M","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G",},
+		{"G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","M","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G",},
+		{"G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","M","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G",},
+		{"G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","M","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G",},
+		{"G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","M","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G",},
+		{"G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","M","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G",},
+		{"G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","M","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G",},
+		{"G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","M","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G",},
+		{"G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","M","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G",},
+		{"G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","M","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G",}
 	};
 }

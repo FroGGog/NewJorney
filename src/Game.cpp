@@ -10,7 +10,7 @@ void Game::InitVars()
 
 	//775 y 50 city dest pos
 	// road start pos 225 50
-	this->tempArmy = new army{ sf::Vector2f{25,25}, sf::Vector2f{125,75}, sf::Color::Blue, sf::Vector2f{775, 50} };
+	this->tempArmy = new army{ sf::Vector2f{25.f,26.f}, sf::Vector2f{50,364}, sf::Color::Blue };
 
 }
 

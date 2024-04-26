@@ -8,38 +8,27 @@ class army
 
 private:
 
-	enum status{IDLE, ATTACK};
-
 	sf::RectangleShape* shape;
 
 	sf::Color color;
 
-	sf::Vector2f pos;
-	sf::Vector2f dest;
-
 	sf::Clock armyMove;
 	sf::Time moveTime;
 
-	std::vector<std::vector<std::string>> surrond;
+	sf::Vector2f moveDir;
+	float speed;
 
-	status state;
-
-	//distance between army and city
-	int distance;
-	int savedDistance; //distance after player moved
-	bool inDistancePoint;
-
-	int getDistance(sf::Vector2f _newPos);
-
-	bool updateDistance(sf::Vector2f _newPos);
 	void updatePos(std::vector<FieldRect*> _roads);
 
-	void moveUp();
+	void updateTurnCollsion(std::vector<FieldRect*> _roads);
+
 
 public:
 	
-	army(sf::Vector2f size, sf::Vector2f start_pos , sf::Color _color, sf::Vector2f _dest);
+	army(sf::Vector2f size, sf::Vector2f start_pos , sf::Color _color);
 	~army();
+
+	void setMoveDir(sf::Vector2f _moveDir);
 
 	void update(std::vector<FieldRect*> _roads);
 
