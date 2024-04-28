@@ -138,6 +138,16 @@ void gameWorld::initTextures()
 		return;
 	}
 
+
+	//turrets textures
+	this->textures["bowTurret"] = new sf::Texture{};
+	if (!this->textures["bowTurret"]->loadFromFile("src/pics/turrets/bow.png")) {
+		std::cout << "ERROR:LOADFROMFILE:PICTURE:bow.png\n";
+	}
+
+	//armies textures
+
+
 	this->button2.setTexture(this->sawmillT);
 	this->button2.setPosition(1150.f, 500.f);
 
@@ -165,9 +175,12 @@ void gameWorld::checkButtonCollision()
 			this->CalculateIncome();
 		}
 	}
+	else if(sf::Keyboard::isKeyPressed(sf::Keyboard::Space)){
+		this->build(*this->textures["bowTurret"], true);
+	}
 }
 
-bool gameWorld::build(sf::Texture& _toBuild)
+bool gameWorld::build(sf::Texture& _toBuild, bool turret)
 {
 	bool canBuild = true;
 	sf::Sprite newBuilding{ _toBuild };
@@ -189,6 +202,15 @@ bool gameWorld::build(sf::Texture& _toBuild)
 	}
 	//if all is ok build structure
 	newBuilding.setScale(this->cal_x / this->goldMineT.getSize().x, this->cal_y / this->goldMineT.getSize().y);
+	if (turret) {
+		Turret temp{ this->textures["bowTurret"] };
+		temp.setPos(sf::Vector2f{ this->saved_x + temp.getSprite().getGlobalBounds().width / 7, this->saved_y + temp.getSprite().getGlobalBounds().height / 7});
+		temp.setScale(this->cal_x / this->goldMineT.getSize().x, this->cal_y / this->goldMineT.getSize().y);
+
+		this->turrets.push_back(temp);
+		return true;
+	}
+
 	this->worldSprites.push_back(newBuilding);
 	return true;
 }
@@ -284,7 +306,18 @@ void gameWorld::update(sf::Window& window)
 
 	this->checkButtonCollision();
 	
+	//turrets and other
+	
 
+
+}
+
+void gameWorld::updateTurrets(std::vector<army*>& enemy_armies)
+{
+	for (auto& i : this->turrets) {
+		i.update(enemy_armies[0]->getPos());
+	}
+	return;
 }
 
 
@@ -324,6 +357,11 @@ void gameWorld::render(sf::RenderTarget& target)
 	for (auto& i : this->worldSprites) {
 		target.draw(i);
 	}
+
+	for (auto& i : this->turrets) {
+		target.draw(i.getSprite());
+	}
+
 
 	if (clicked) {
 		target.draw(this->choosedSprite);

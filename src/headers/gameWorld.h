@@ -2,6 +2,8 @@
 #include "../stdafx.h"
 #include "Buildings.h"
 #include "FieldRect.h"
+#include "Turret.h"
+#include "army.h"
 
 class gameWorld
 {
@@ -14,6 +16,7 @@ private:
 	std::vector<sf::Sprite> worldSprites;
 
 	std::vector<Buildings> buildings;
+	std::vector<Turret> turrets;
 
 	std::map<std::string, int> resources;
 
@@ -55,7 +58,7 @@ private:
 	void checkButtonCollision();
 
 	//spawn sprite on clicked rect
-	bool build(sf::Texture& _toBuild);
+	bool build(sf::Texture& _toBuild, bool turret = false);
 
 	void CalculateIncome();
 
@@ -81,6 +84,7 @@ public:
 	std::vector<FieldRect*> roadRects() const;
 
 	void update(sf::Window& window);
+	void updateTurrets(std::vector<army*>& enemy_armies);
 
 	void render(sf::RenderTarget& target);
 	void renderButtons(sf::RenderTarget& target);

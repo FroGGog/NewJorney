@@ -29,6 +29,11 @@ void army::setMoveDir(sf::Vector2f _moveDir)
 	this->moveDir = _moveDir;
 }
 
+sf::Vector2f army::getPos()
+{
+	return this->shape->getPosition();
+}
+
 
 void army::update(std::vector<FieldRect*> _roads)
 {

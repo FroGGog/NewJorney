@@ -29,6 +29,7 @@ public:
 	~army();
 
 	void setMoveDir(sf::Vector2f _moveDir);
+	sf::Vector2f getPos();
 
 	void update(std::vector<FieldRect*> _roads);
 

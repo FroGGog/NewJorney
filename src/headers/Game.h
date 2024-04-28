@@ -15,13 +15,13 @@ private:
 	sf::Event GameEvents;
 
 	std::map<std::string, sf::Texture*> textures;
+	std::vector<army*> enemyArmy;
 
 	gameWorld gWorld;
 
 	GameStats gameStats;
 
 	army* tempArmy;
-	Turret* tempTurret;
 
 	//gui
 	sf::RectangleShape GUIback;
@@ -32,7 +32,6 @@ private:
 	void InitVars();
 	void InitWindow();
 	void InitGui();
-	void InitTextures();
 
 
 public:
