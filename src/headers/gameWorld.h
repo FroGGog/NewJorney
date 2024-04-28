@@ -17,6 +17,8 @@ private:
 
 	std::map<std::string, int> resources;
 
+	std::map < std::string, sf::Texture*> textures;
+
 	GMine mine1;
 
 	float saved_x, saved_y;
@@ -33,11 +35,9 @@ private:
 	sf::Texture choosedTexture;
 	sf::Sprite choosedSprite;
 
+	//buttons
 	sf::Texture goldMineT;
-	sf::Texture goldMineTplace;
-
 	sf::Texture sawmillT;
-	sf::Texture sawmillTplace;
 
 	sf::Sprite button1;
 	sf::Sprite button2;
@@ -45,6 +45,7 @@ private:
 	bool clicked;
 	bool print;
 
+	//fill game field based on world string vector
 	void fillRectsV();
 
 	void initWorldMap();
@@ -58,6 +59,7 @@ private:
 
 	void CalculateIncome();
 
+	//updates shape for button collision
 	void updateTshape();
 
 	void getOnRectClick(sf::Window& window);

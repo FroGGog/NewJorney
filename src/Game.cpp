@@ -12,6 +12,8 @@ void Game::InitVars()
 	// road start pos 225 50
 	this->tempArmy = new army{ sf::Vector2f{25.f,26.f}, sf::Vector2f{50,364}, sf::Color::Blue };
 
+	this->tempTurret = new Turret{ this->textures["bowTurret"] };
+
 }
 
 void Game::InitWindow()
@@ -45,13 +47,28 @@ void Game::InitGui()
 	this->blackStroke.setPosition(this->gWorld.getWorldEnd(), 0);
 }
 
+void Game::InitTextures()
+{
+	//turrets textures
+	this->textures["bowTurret"] = new sf::Texture{};
+	if (!this->textures["bowTurret"]->loadFromFile("src/pics/turrets/bow.png")) {
+		std::cout << "ERROR:LOADFROMFILE:PICTURE:bow.png\n";
+	}
+
+	//armies textures
+
+}
+
 
 //public staff
 Game::Game()
 {
+	this->InitTextures();
+
 	this->InitVars();
 	this->InitWindow();
 	this->InitGui();
+	
 }
 
 Game::~Game()
@@ -59,6 +76,13 @@ Game::~Game()
 	delete this->window;
 
 	delete this->tempArmy;
+
+	delete this->tempTurret;
+
+	//delete all textures
+	for (auto& i : this->textures) {
+		delete i.second;
+	}
 
 }
 
@@ -84,6 +108,9 @@ void Game::update()
 	this->gameStats.getIncome(this->gWorld.getIncome());
 
 	this->tempArmy->update(this->gWorld.roadRects());
+
+	this->tempTurret->update();
+
 }
 
 void Game::updateEvents()
@@ -110,6 +137,7 @@ void Game::render()
 
 	//armies
 	this->tempArmy->render(*this->window);
+	this->tempTurret->render(*this->window);
 
 	//gui stuff
 	this->window->draw(this->GUIback);

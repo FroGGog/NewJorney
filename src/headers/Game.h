@@ -1,6 +1,7 @@
 #include "gameWorld.h"
 #include "GameStats.h"
 #include "army.h"
+#include "Turret.h"
 
 class Game
 {
@@ -13,11 +14,14 @@ private:
 	sf::RenderWindow* window;
 	sf::Event GameEvents;
 
+	std::map<std::string, sf::Texture*> textures;
+
 	gameWorld gWorld;
 
 	GameStats gameStats;
 
 	army* tempArmy;
+	Turret* tempTurret;
 
 	//gui
 	sf::RectangleShape GUIback;
@@ -28,6 +32,7 @@ private:
 	void InitVars();
 	void InitWindow();
 	void InitGui();
+	void InitTextures();
 
 
 public:

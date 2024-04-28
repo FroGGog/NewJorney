@@ -17,8 +17,8 @@ private:
 
 	sf::Vector2f moveDir;
 	float speed;
-
-	void updatePos(std::vector<FieldRect*> _roads);
+	bool alive;
+	int hp;
 
 	void updateTurnCollsion(std::vector<FieldRect*> _roads);
 

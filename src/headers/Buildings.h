@@ -16,8 +16,10 @@ public:
 
 	bool checkEnoughtRes(int w, int g, int f);
 
+	//minus building cost from player goods
 	void MinusCost(int& g, int& w, int& f);
 
+	//return building type - g_mine, w_mine, f_mine - for gold mine, wood mine and food mine
 	std::string getType() const;
 
 };

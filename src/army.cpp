@@ -13,6 +13,9 @@ army::army(sf::Vector2f size, sf::Vector2f start_pos, sf::Color _color)
 
 	this->moveDir = sf::Vector2f{ 0.f, this->speed };
 
+	this->hp = 100;
+	this->alive = true;
+
 }
 
 army::~army()
@@ -32,35 +35,23 @@ void army::update(std::vector<FieldRect*> _roads)
 	this->shape->move(this->moveDir);
 
 	this->updateTurnCollsion(_roads);
-}
 
 
-
-void army::updatePos(std::vector<FieldRect*> _roads)
-{
-
-	this->moveTime = this->armyMove.getElapsedTime();
-
-	if (this->moveTime.asSeconds() > .5f) {
-		
-
-		this->armyMove.restart();
-
+	// TODO : create death system
+	if (this->shape->getPosition().x > 500.f) {
+		this->alive = false;
 	}
-
 }
 
+// if army is on turn point pos, turn army and move in different dir
 void army::updateTurnCollsion(std::vector<FieldRect*> _roads)
 {
 	
 	for (auto& i : _roads) {
 		//if we on the turn road set pos to this turn road and turn square
-		
-
+	
 		if (i->getShape().getPosition() == this->shape->getPosition()) {
-			std::cout << "x " << i->getShape().getPosition().x << " y " << i->getShape().getPosition().y << '\n';
-			std::cout << "x " << this->shape->getPosition().x << " y " << this->shape->getPosition().y << '\n';
-			std::cout << "TURN\n";
+
 			switch (i->getTurn())
 			{
 			case FieldRect::turn_type::RIGHT:

@@ -102,7 +102,7 @@ void gameWorld::initVars()
 
 void gameWorld::initTextures()
 {
-	//rect 
+	//rect
 	if (!this->choosedTexture.loadFromFile("src/pics/choosedRect.png")) {
 		std::cout << "ERROR::LOADFROMFILE::choosedRect.png\n";
 		return;
@@ -118,18 +118,22 @@ void gameWorld::initTextures()
 	this->button1.setPosition(1050.f, 500.f);
 
 	//mine placeholder
-	if (!this->goldMineTplace.loadFromFile("src/pics/goldMinePlace.png")) {
+	this->textures["gold_mine"] = new sf::Texture{};
+	if (!this->textures["gold_mine"]->loadFromFile("src/pics/goldMinePlace.png")) {
 		std::cout << "ERROR:LOADFROMFILE::goldMinePlace.png\n";
 		return;
 	}
+	
 
-	//sawmill
+	//sawmill button
 	if (!this->sawmillT.loadFromFile("src/pics/sawmill.png")) {
 		std::cout << "ERROR:LOADFROMFILE::sawmill.png\n";
 		return;
 	}
 
-	if (!this->sawmillTplace.loadFromFile("src/pics/sawmillPlace.png")) {
+	//building
+	this->textures["sawmill"] = new sf::Texture{};
+	if (!this->textures["sawmill"]->loadFromFile("src/pics/sawmillPlace.png")) {
 		std::cout << "ERROR:LOADFROMFILE::sawmillPlace.png\n";
 		return;
 	}
@@ -145,7 +149,7 @@ void gameWorld::checkButtonCollision()
 	if (this->Tshape.getGlobalBounds().intersects(this->button1.getGlobalBounds()) && sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
 		GMine temp;
 		//check if enought res to build and space is't occupied
-		if (temp.checkEnoughtRes(this->resources["wood"], this->resources["gold"], this->resources["food"]) && this->build(this->goldMineTplace)) {
+		if (temp.checkEnoughtRes(this->resources["wood"], this->resources["gold"], this->resources["food"]) && this->build(*this->textures["gold_mine"])) {
 			temp.MinusCost(this->resources["gold"], this->resources["wood"], this->resources["food"]);
 			this->buildings.push_back(temp);
 			this->CalculateIncome();
@@ -155,7 +159,7 @@ void gameWorld::checkButtonCollision()
 	else if (this->Tshape.getGlobalBounds().intersects(this->button2.getGlobalBounds()) && sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
 		SawMill temp;
 
-		if (temp.checkEnoughtRes(this->resources["wood"], this->resources["gold"], this->resources["food"]) && this->build(this->sawmillTplace)) {
+		if (temp.checkEnoughtRes(this->resources["wood"], this->resources["gold"], this->resources["food"]) && this->build(*this->textures["sawmill"])) {
 			temp.MinusCost(this->resources["gold"], this->resources["wood"], this->resources["food"]);
 			this->buildings.push_back(temp);
 			this->CalculateIncome();
@@ -224,12 +228,18 @@ gameWorld::~gameWorld()
 		delete i;
 		i = nullptr;
 	}
+
+	for (auto& i : this->textures) {
+		delete i.second;
+	}
+
 }
 
 void gameWorld::getScreenSize(sf::Vector2i _screen_size)
 {
 	this->screen_size = _screen_size;
 }
+
 
 int gameWorld::getWorldEnd() const
 {
