@@ -6,6 +6,11 @@ The main idea is simple - tower defence. Build barrack, farms, mines
 or sawmill, create armies and attack your opponets.
 
 ## Updates  
+### v 1.0.3
+- Added turrets class
+- Now turrets can rotate to enemy pos
+- Fixed some textures issues
+
 ### v 1.0.2
 - Changed game genre - now tower defence
 - Recreate game map
