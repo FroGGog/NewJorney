@@ -85,7 +85,7 @@ public:
 	void updateTurrets(std::vector<army>& enemy_armies);
 
 	void render(sf::RenderTarget& target);
-	void renderButtons(sf::RenderTarget& target);
+	void renderButtons(sf::RenderTarget& target) const;
 
 	void initGameField();
 

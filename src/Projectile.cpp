@@ -31,7 +31,9 @@ Projectile::Projectile(float r_degrees, sf::Vector2f start_pos, std::shared_ptr<
 	this->sprite.setPosition(start_pos);
 	this->sprite.setRotation(this->rotation);
 
-	this->speed = 15.f;
+	this->sprite.setOrigin(_texture->getSize().x / static_cast<float>(2), _texture->getSize().y / static_cast<float>(2));
+
+	this->speed = 20.f;
 	this->state = projectile_state::NONE;
 
 	this->velocity.x = std::cos(this->rotation * 3.14 / 180.0) * speed;
@@ -51,6 +53,7 @@ projectile_state Projectile::getState() const
 
 void Projectile::update()
 {
+
 	this->sprite.move(this->velocity);
 
 	this->updateBorderCollision();

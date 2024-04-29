@@ -3,12 +3,12 @@
 
 void gameWorld::fillRectsV()
 {
-	int temp_x = 0, temp_y = 0;
+	float temp_x = 0, temp_y = 0;
 
 	this->worldRects.clear();
 
-	this->cal_x = (this->screen_size.x - 250) / this->worldMap[0].size();
-	this->cal_y = this->screen_size.y / this->worldMap.size() + 1;
+	this->cal_x = float((this->screen_size.x - 250) / this->worldMap[0].size());
+	this->cal_y = float(this->screen_size.y / this->worldMap.size() + 1);
 
 	for (auto& i : this->worldMap) {
 		for (auto& j : i) {
@@ -264,7 +264,7 @@ void gameWorld::getScreenSize(sf::Vector2i _screen_size)
 
 int gameWorld::getWorldEnd() const
 {
-	return this->cal_x * this->worldMap[0].size();
+	return int(this->cal_x * this->worldMap[0].size());
 }
 
 void gameWorld::setResources(std::map<std::string, int> _res)
@@ -318,7 +318,7 @@ void gameWorld::updateTurrets(std::vector<army>& enemy_armies)
 
 void gameWorld::updateTshape()
 {
-	for (auto i : this->worldRects) {
+	for (auto& i : this->worldRects) {
 		if (this->Tshape.getGlobalBounds().intersects(i->getShape().getGlobalBounds())) {
 			//std::cout << this->choosedSprite.getPosition().x << ' ' << this->choosedSprite.getPosition().y << '\n';
 			this->saved_x = i->getShape().getGlobalBounds().getPosition().x;
@@ -336,7 +336,7 @@ void gameWorld::getOnRectClick(sf::Window& window)
 	if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
 		this->clicked = true;
 		this->Tshape = sf::RectangleShape{ sf::Vector2f{1.f,1.f} };
-		this->Tshape.setPosition(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y);
+		this->Tshape.setPosition(float(sf::Mouse::getPosition(window).x), float(sf::Mouse::getPosition(window).y));
 	}
 }
 
@@ -364,7 +364,7 @@ void gameWorld::render(sf::RenderTarget& target)
 	
 }
 
-void gameWorld::renderButtons(sf::RenderTarget& target)
+void gameWorld::renderButtons(sf::RenderTarget& target) const
 {
 	target.draw(this->button1);
 	target.draw(this->button2);

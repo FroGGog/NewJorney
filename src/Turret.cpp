@@ -8,7 +8,7 @@ Turret::Turret(std::shared_ptr<sf::Texture> _texture, std::shared_ptr<sf::Textur
 	this->projectileTexture = _projectileTexture;
 
 
-	this->sprite.setOrigin(_texture->getSize().x / 2, _texture->getSize().y / 2);
+	this->sprite.setOrigin(_texture->getSize().x / static_cast<float>(2), _texture->getSize().y / static_cast<float>(2));
 
 	this->attackSpeed = 1.f;
 	this->rotationSpeed = 0.89f;
@@ -86,7 +86,10 @@ void Turret::shoot(sf::Vector2f _enemyPos)
 
 		float ProjectileAngle = atan2(_enemyPos.y - this->sprite.getPosition().y, _enemyPos.x - this->sprite.getPosition().x) * 180 / 3.14;
 
-		std::shared_ptr<Projectile> tempArrow = std::make_shared<Projectile>(ProjectileAngle, this->sprite.getPosition(), this->projectileTexture);
+		sf::Vector2f projectile_stPos = {this->sprite.getPosition().x + this->sprite.getGlobalBounds().width / 4 - 1.f,
+			this->sprite.getPosition().y + this->sprite.getGlobalBounds().height / 10 - 1.f};
+
+		std::shared_ptr<Projectile> tempArrow = std::make_shared<Projectile>(ProjectileAngle, projectile_stPos , this->projectileTexture);
 
 		tempArrow->setScale(this->saved_x, this->saved_y);
 		
