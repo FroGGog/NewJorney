@@ -316,9 +316,6 @@ void gameWorld::update(sf::Window& window)
 	this->getOnRectClick(window);
 
 	this->checkButtonCollision();
-	
-	//turrets and other
-
 
 }
 

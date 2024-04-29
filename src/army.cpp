@@ -9,7 +9,7 @@ army::army(sf::Vector2f size, sf::Vector2f start_pos, sf::Color _color)
 
 	this->shape.setPosition(start_pos);
 
-	this->speed = .5f;
+	this->speed = 2.f;
 
 	this->moveDir = sf::Vector2f{ 0.f, this->speed };
 	this->movingSide = m_side::DOWN;
@@ -59,18 +59,18 @@ void army::updateTurnCollsion(std::vector<FieldRect*> _roads)
 		{
 		case m_side::DOWN:
 			floatRectPos = sf::Vector2f{ i->getGBounds().getPosition().x + i->getGBounds().width / 2,
-				i->getGBounds().getPosition().y + i->getGBounds().height};
+				i->getGBounds().getPosition().y + i->getGBounds().height - 2.f};
 			break;
 		case m_side::UP:
 			floatRectPos = sf::Vector2f{ i->getGBounds().getPosition().x + i->getGBounds().width / 2,
-				i->getGBounds().getPosition().y};
+				i->getGBounds().getPosition().y - 4.f};
 			break;
 		case m_side::LEFT:
-			floatRectPos = sf::Vector2f{ i->getGBounds().getPosition().x,
+			floatRectPos = sf::Vector2f{ i->getGBounds().getPosition().x - 4.f,
 				i->getGBounds().getPosition().y + i->getGBounds().height / 2 };
 			break;
 		case m_side::RIGHT:
-			floatRectPos = sf::Vector2f{ i->getGBounds().getPosition().x + i->getGBounds().width,
+			floatRectPos = sf::Vector2f{ i->getGBounds().getPosition().x + i->getGBounds().width - 2.f,
 				i->getGBounds().getPosition().y + i->getGBounds().height / 2};
 			break;
 		default:

@@ -6,6 +6,14 @@ The main idea is simple - tower defence. Build barrack, farms, mines
 or sawmill, create armies and attack your opponets.
 
 ## Updates  
+### v 1.0.4
+- Turrets now can shoot enemies
+- Turrest choose closest enemy to them
+- Projectiles created
+- Some bug fixes
+- Created spawner function (spawn enemies in period of time)
+- Projectiles deleted when out of screen
+
 ### v 1.0.3
 - Added turrets class
 - Now turrets can rotate to enemy pos

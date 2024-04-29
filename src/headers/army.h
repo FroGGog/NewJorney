@@ -24,7 +24,8 @@ private:
 	m_side movingSide;
 
 	void updateTurnCollsion(std::vector<FieldRect*> _roads);
-
+	// TODO : add hp loss when got hit
+	// TODO : add different types of enemies fast, invisible, armour
 
 public:
 	

@@ -3,7 +3,7 @@
 
 void Projectile::updateCollision()
 {
-
+	// TODO : complete collsion with enemies
 
 }
 

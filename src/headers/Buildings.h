@@ -40,3 +40,6 @@ public:
 	SawMill();
 
 };
+
+// TODO : food farm
+// TODO : may be add some new building, like armory, barracks etc
