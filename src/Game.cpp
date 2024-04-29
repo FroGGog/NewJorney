@@ -98,6 +98,7 @@ void Game::update()
 
 	this->gameStats.getIncome(this->gWorld.getIncome());
 
+	//update turrets
 	this->gWorld.updateTurrets(this->enemyArmy);
 
 	this->tempArmy->update(this->gWorld.roadRects());

@@ -144,6 +144,10 @@ void gameWorld::initTextures()
 	if (!this->textures["bowTurret"]->loadFromFile("src/pics/turrets/bow.png")) {
 		std::cout << "ERROR:LOADFROMFILE:PICTURE:bow.png\n";
 	}
+	this->textures["bowProjectile"] = new sf::Texture{};
+	if (!this->textures["bowProjectile"]->loadFromFile("src/pics/turrets/bowArrow.png")) {
+		std::cout << "ERROR:LOADFROMFILE:PICTURE:bowArrow.png\n";
+	}
 
 	//armies textures
 
@@ -191,6 +195,13 @@ bool gameWorld::build(sf::Texture& _toBuild, bool turret)
 			return false;
 		}
 	}
+	//if player tryies to place more than one turret on same rect
+	for (auto& i : this->turrets) {
+		if (i.getBounds().contains(newBuilding.getPosition())) {
+			return false;
+		}
+	}
+
 	//if player tryies to build on road or on city 
 	for (auto& i : this->worldRects) {
 		FieldRect::f_type tempType = i->getType();
@@ -203,7 +214,7 @@ bool gameWorld::build(sf::Texture& _toBuild, bool turret)
 	//if all is ok build structure
 	newBuilding.setScale(this->cal_x / this->goldMineT.getSize().x, this->cal_y / this->goldMineT.getSize().y);
 	if (turret) {
-		Turret temp{ this->textures["bowTurret"] };
+		Turret temp{ this->textures["bowTurret"], this->textures["bowProjectile"], turret_type::ARROW};
 		temp.setPos(sf::Vector2f{ this->saved_x + temp.getSprite().getGlobalBounds().width / 7, this->saved_y + temp.getSprite().getGlobalBounds().height / 7});
 		temp.setScale(this->cal_x / this->goldMineT.getSize().x, this->cal_y / this->goldMineT.getSize().y);
 
@@ -307,7 +318,6 @@ void gameWorld::update(sf::Window& window)
 	this->checkButtonCollision();
 	
 	//turrets and other
-	
 
 
 }
@@ -359,7 +369,7 @@ void gameWorld::render(sf::RenderTarget& target)
 	}
 
 	for (auto& i : this->turrets) {
-		target.draw(i.getSprite());
+		i.render(target);
 	}
 
 

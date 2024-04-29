@@ -1,19 +1,30 @@
 #include "headers/Turret.h"
 
 
-Turret::Turret(sf::Texture* _texture)
+Turret::Turret(sf::Texture* _texture, sf::Texture* _projectileTexture , turret_type _type)
 {
 
 	this->sprite.setTexture(*_texture);
+	this->projectileTexture = _projectileTexture;
+
 
 	this->sprite.setOrigin(_texture->getSize().x / 2, _texture->getSize().y / 2);
 
 	this->attackSpeed = 1.f;
 	this->rotationSpeed = 0.89f;
+	this->saved_x = 5;
+	this->saved_y = 5;
 
+	this->type = _type;
 
 }
 
+
+
+Turret::~Turret()
+{
+	this->projectileTexture = nullptr;
+}
 
 sf::Sprite Turret::getSprite() const
 {
@@ -28,19 +39,30 @@ void Turret::setPos(sf::Vector2f _newPos)
 void Turret::setScale(float x, float y)
 {
 	this->sprite.setScale(x, y);
+	this->saved_x = x;
+	this->saved_y = y;
+}
+
+sf::FloatRect Turret::getBounds()
+{
+	return this->sprite.getGlobalBounds();
 }
 
 void Turret::update(sf::Vector2f _enemyPos)
 {
-	sf::Vector2f distance = _enemyPos - this->sprite.getPosition();
+	//rotation system
 
-	distance /= sqrtf(distance.x * distance.x + distance.y * distance.y);
+	float angle = atan2((_enemyPos.y + 2.5f) - this->sprite.getPosition().y, (_enemyPos.x + 2.5f) - this->sprite.getPosition().x) * 180 / 3.14;
 
-	float angle = atan2(distance.y, distance.x);
+	this->sprite.setRotation(angle);
 
-	auto angle_degrees = angle * 180 / 3.14159f;
+	//shoot system
+	this->shoot(_enemyPos);
 
-	this->sprite.setRotation(angle_degrees);
+	//update projectiles
+	for (auto& i : this->projectiles) {
+		i.update();
+	}
 
 
 }
@@ -48,11 +70,36 @@ void Turret::update(sf::Vector2f _enemyPos)
 void Turret::render(sf::RenderTarget& target)
 {	
 	target.draw(this->sprite);
-}
 
+	for (auto& i : this->projectiles) {
+		i.render(target);
+	}
+
+}
 
 void Turret::updateRotation()
 {
 
 	this->sprite.rotate(2.f);
 }
+
+void Turret::shoot(sf::Vector2f _enemyPos)
+{
+	this->reloadTime = this->reloadClock.getElapsedTime();
+
+	if (this->reloadTime.asSeconds() > .5f) {
+
+		float ProjectileAngle = atan2(_enemyPos.y - this->sprite.getPosition().y, _enemyPos.x - this->sprite.getPosition().x) * 180 / 3.14;
+
+		Projectile tempArrow{ ProjectileAngle, this->sprite.getPosition(), this->projectileTexture};
+
+		tempArrow.setScale(this->saved_x, this->saved_y);
+		
+		this->projectiles.push_back(tempArrow);
+
+		this->reloadClock.restart();
+
+	}
+
+}
+
