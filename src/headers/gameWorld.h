@@ -11,7 +11,7 @@ private:
 
 	std::vector<std::vector<std::string>> worldMap;
 
-	std::vector<FieldRect* > worldRects;
+	std::vector<std::shared_ptr<FieldRect>> worldRects;
 
 	std::vector<sf::Sprite> worldSprites;
 
@@ -20,7 +20,7 @@ private:
 
 	std::map<std::string, int> resources;
 
-	std::map < std::string, sf::Texture*> textures;
+	std::map < std::string, std::shared_ptr<sf::Texture>> textures;
 
 	GMine mine1;
 
@@ -71,8 +71,6 @@ private:
 public:
 
 	gameWorld();
-	~gameWorld();
-
 
 	void getScreenSize(sf::Vector2i _screen_size);
 	int getWorldEnd() const;
@@ -81,7 +79,7 @@ public:
 	std::vector<int> getIncome() const;
 
 	//get all road and city rects from worldRects
-	std::vector<FieldRect*> roadRects() const;
+	std::vector<std::shared_ptr<FieldRect>> roadRects() const;
 
 	void update(sf::Window& window);
 	void updateTurrets(std::vector<army>& enemy_armies);

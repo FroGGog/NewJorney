@@ -11,17 +11,14 @@ private:
 	int screen_x, screen_y;
 
 	sf::VideoMode vMode;
-	sf::RenderWindow* window;
+	std::shared_ptr<sf::RenderWindow> window;
 	sf::Event GameEvents;
 
-	std::map<std::string, sf::Texture*> textures;
 	std::vector<army> enemyArmy;
 
 	gameWorld gWorld;
 
 	GameStats gameStats;
-
-	army* tempArmy;
 
 	//gui
 	sf::RectangleShape GUIback;
@@ -42,7 +39,6 @@ private:
 public:
 	//constructor and dest
 	Game();
-	virtual ~Game();
 
 	//accessors
 	const bool windowOpen() const;

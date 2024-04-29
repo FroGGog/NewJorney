@@ -23,7 +23,7 @@ private:
 	int hp;
 	m_side movingSide;
 
-	void updateTurnCollsion(std::vector<FieldRect*> _roads);
+	void updateTurnCollsion(std::vector<std::shared_ptr<FieldRect>> _roads);
 	// TODO : add hp loss when got hit
 	// TODO : add different types of enemies fast, invisible, armour
 
@@ -35,7 +35,7 @@ public:
 	sf::Vector2f getPos();
 	sf::FloatRect getGlobalBounds();
 
-	void update(std::vector<FieldRect*> _roads);
+	void update(std::vector<std::shared_ptr<FieldRect>> _roads);
 
 	void render(sf::RenderTarget& target);
 

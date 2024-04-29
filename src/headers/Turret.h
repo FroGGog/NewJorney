@@ -9,9 +9,9 @@ class Turret
 {
 private:
 
-	std::vector<Projectile> projectiles;
+	std::vector<std::shared_ptr<Projectile>> projectiles;
 
-	sf::Texture* projectileTexture;
+	std::shared_ptr<sf::Texture> projectileTexture;
 	sf::Sprite sprite;
 	
 	sf::Clock reloadClock;
@@ -31,8 +31,7 @@ private:
 
 public:
 
-	Turret(sf::Texture* _texture, sf::Texture* _projectileTexture, turret_type _type);
-	~Turret();
+	Turret(std::shared_ptr<sf::Texture> _texture, std::shared_ptr<sf::Texture> _projectileTexture, turret_type _type);
 
 	sf::Sprite getSprite() const;
 	void setPos(sf::Vector2f _newPos);

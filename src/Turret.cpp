@@ -1,7 +1,7 @@
 #include "headers/Turret.h"
 
 
-Turret::Turret(sf::Texture* _texture, sf::Texture* _projectileTexture , turret_type _type)
+Turret::Turret(std::shared_ptr<sf::Texture> _texture, std::shared_ptr<sf::Texture> _projectileTexture , turret_type _type)
 {
 
 	this->sprite.setTexture(*_texture);
@@ -20,11 +20,6 @@ Turret::Turret(sf::Texture* _texture, sf::Texture* _projectileTexture , turret_t
 }
 
 
-
-Turret::~Turret()
-{
-	this->projectileTexture = nullptr;
-}
 
 sf::Sprite Turret::getSprite() const
 {
@@ -63,7 +58,7 @@ void Turret::update(std::vector<army>& enemy_armies)
 
 	//update projectiles
 	for (auto& i : this->projectiles) {
-		i.update();
+		i->update();
 	}
 
 	this->updateOutProjectiles();
@@ -76,7 +71,7 @@ void Turret::render(sf::RenderTarget& target)
 	target.draw(this->sprite);
 
 	for (auto& i : this->projectiles) {
-		i.render(target);
+		i->render(target);
 	}
 
 }
@@ -91,9 +86,9 @@ void Turret::shoot(sf::Vector2f _enemyPos)
 
 		float ProjectileAngle = atan2(_enemyPos.y - this->sprite.getPosition().y, _enemyPos.x - this->sprite.getPosition().x) * 180 / 3.14;
 
-		Projectile tempArrow{ ProjectileAngle, this->sprite.getPosition(), this->projectileTexture};
+		std::shared_ptr<Projectile> tempArrow = std::make_shared<Projectile>(ProjectileAngle, this->sprite.getPosition(), this->projectileTexture);
 
-		tempArrow.setScale(this->saved_x, this->saved_y);
+		tempArrow->setScale(this->saved_x, this->saved_y);
 		
 		this->projectiles.push_back(tempArrow);
 
@@ -107,7 +102,7 @@ void Turret::updateOutProjectiles()
 {
 	//if projectile out of screen border - delete it
 	for (int i{ 0 }; i < this->projectiles.size(); i++) {
-		if (this->projectiles[i].getState() == projectile_state::OUT) {
+		if (this->projectiles[i]->getState() == projectile_state::OUT) {
 			this->projectiles.erase(this->projectiles.begin() + i);
 		}
 	}

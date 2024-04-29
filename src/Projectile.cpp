@@ -24,7 +24,7 @@ bool Projectile::updateBorderCollision()
 
 }
 
-Projectile::Projectile(float r_degrees, sf::Vector2f start_pos, sf::Texture* _texture) : rotation(r_degrees)
+Projectile::Projectile(float r_degrees, sf::Vector2f start_pos, std::shared_ptr<sf::Texture> _texture) : rotation(r_degrees)
 {
 	
 	this->sprite.setTexture(*_texture);

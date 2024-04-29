@@ -21,7 +21,7 @@ void Game::InitWindow()
 	this->vMode.width = this->screen_x;
 	this->vMode.height = this->screen_y;
 
-	this->window = new sf::RenderWindow(this->vMode, "New Jorney", sf::Style::Resize | sf::Style::Close);
+	this->window = std::make_shared<sf::RenderWindow>(this->vMode, "New Jorney", sf::Style::Resize | sf::Style::Close);
 	this->window->setFramerateLimit(60);
 
 	//game world stuff
@@ -67,22 +67,6 @@ Game::Game()
 	this->InitWindow();
 	this->InitGui();
 	
-}
-
-Game::~Game()
-{
-	delete this->window;
-
-	delete this->tempArmy;
-
-	//delete all textures
-	for (auto& i : this->textures) {
-		delete i.second;
-		i.second = nullptr;
-	}
-
-
-
 }
 
 const bool Game::windowOpen() const

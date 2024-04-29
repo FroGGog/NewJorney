@@ -36,7 +36,7 @@ sf::FloatRect army::getGlobalBounds()
 }
 
 
-void army::update(std::vector<FieldRect*> _roads)
+void army::update(std::vector<std::shared_ptr<FieldRect>> _roads)
 {
 	this->shape.move(this->moveDir);
 
@@ -50,7 +50,7 @@ void army::update(std::vector<FieldRect*> _roads)
 }
 
 // if army is on turn point pos, turn army and move in different dir
-void army::updateTurnCollsion(std::vector<FieldRect*> _roads)
+void army::updateTurnCollsion(std::vector<std::shared_ptr<FieldRect>> _roads)
 {
 	sf::Vector2f floatRectPos{ 0,0 };
 	for (auto& i : _roads) {

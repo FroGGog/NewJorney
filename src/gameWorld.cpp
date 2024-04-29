@@ -16,7 +16,7 @@ void gameWorld::fillRectsV()
 			sf::RectangleShape temp_shape{ sf::Vector2f(cal_x, cal_y) };
 			temp_shape.setPosition(temp_x, temp_y);
 
-			FieldRect* temp = new FieldRect{ temp_shape, FieldRect::NONE };
+			std::shared_ptr<FieldRect> temp = std::make_shared<FieldRect>( temp_shape, FieldRect::NONE );
 
 			//check if player clicked on any rect in game
 			
@@ -118,7 +118,7 @@ void gameWorld::initTextures()
 	this->button1.setPosition(1050.f, 500.f);
 
 	//mine placeholder
-	this->textures["gold_mine"] = new sf::Texture{};
+	this->textures["gold_mine"] = std::shared_ptr<sf::Texture>(new sf::Texture());
 	if (!this->textures["gold_mine"]->loadFromFile("src/pics/goldMinePlace.png")) {
 		std::cout << "ERROR:LOADFROMFILE::goldMinePlace.png\n";
 		return;
@@ -132,7 +132,7 @@ void gameWorld::initTextures()
 	}
 
 	//building
-	this->textures["sawmill"] = new sf::Texture{};
+	this->textures["sawmill"] = std::shared_ptr<sf::Texture>(new sf::Texture());
 	if (!this->textures["sawmill"]->loadFromFile("src/pics/sawmillPlace.png")) {
 		std::cout << "ERROR:LOADFROMFILE::sawmillPlace.png\n";
 		return;
@@ -140,11 +140,11 @@ void gameWorld::initTextures()
 
 
 	//turrets textures
-	this->textures["bowTurret"] = new sf::Texture{};
+	this->textures["bowTurret"] = std::shared_ptr<sf::Texture>(new sf::Texture());
 	if (!this->textures["bowTurret"]->loadFromFile("src/pics/turrets/bow.png")) {
 		std::cout << "ERROR:LOADFROMFILE:PICTURE:bow.png\n";
 	}
-	this->textures["bowProjectile"] = new sf::Texture{};
+	this->textures["bowProjectile"] = std::shared_ptr<sf::Texture>(new sf::Texture());
 	if (!this->textures["bowProjectile"]->loadFromFile("src/pics/turrets/bowArrow.png")) {
 		std::cout << "ERROR:LOADFROMFILE:PICTURE:bowArrow.png\n";
 	}
@@ -255,18 +255,6 @@ gameWorld::gameWorld()
 
 }
 
-gameWorld::~gameWorld()
-{
-	for (auto& i : this->worldRects) {
-		delete i;
-		i = nullptr;
-	}
-
-	for (auto& i : this->textures) {
-		delete i.second;
-	}
-
-}
 
 void gameWorld::getScreenSize(sf::Vector2i _screen_size)
 {
@@ -294,9 +282,9 @@ std::vector<int> gameWorld::getIncome() const
 	return std::vector<int>{this->temp_incomeGold, this->temp_incomeWood, this->temp_incomeFood};
 }
 
-std::vector<FieldRect*> gameWorld::roadRects() const
+std::vector<std::shared_ptr<FieldRect>> gameWorld::roadRects() const
 {
-	std::vector<FieldRect* > roadRects;
+	std::vector<std::shared_ptr<FieldRect>> roadRects;
 	for (auto& i : this->worldRects) {
 		//if it's turn road add it to vector
 		if (i->getTurn() == FieldRect::turn_type::NONETURN) {

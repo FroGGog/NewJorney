@@ -8,7 +8,6 @@ class Projectile
 
 protected:
 	sf::Sprite sprite;
-	sf::Texture	texture;
 
 	sf::Vector2f velocity;
 
@@ -25,7 +24,7 @@ protected:
 
 public:
 
-	Projectile(float r_degrees, sf::Vector2f start_pos, sf::Texture* _texture);
+	Projectile(float r_degrees, sf::Vector2f start_pos, std::shared_ptr<sf::Texture> _texture);
 
 	void setScale(float x, float y);
 	projectile_state getState() const;
