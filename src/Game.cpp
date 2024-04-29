@@ -10,9 +10,6 @@ void Game::InitVars()
 
 	//775 y 50 city dest pos
 	// road start pos 225 50
-	this->tempArmy = new army{ sf::Vector2f{25.f,26.f}, sf::Vector2f{50,364}, sf::Color::Blue };
-
-	this->enemyArmy.push_back(this->tempArmy);
 
 }
 
@@ -47,6 +44,21 @@ void Game::InitGui()
 	this->blackStroke.setPosition(this->gWorld.getWorldEnd(), 0);
 }
 
+void Game::spawnArmy()
+{
+	this->spawnerTime = this->spawnerClock.getElapsedTime();
+
+	if (this->spawnerTime.asSeconds() > 1.5f) {
+
+		army tempArm{ sf::Vector2f{25.f,25.f}, sf::Vector2f{50,364}, sf::Color::Green };
+
+		this->enemyArmy.push_back(tempArm);
+
+		this->spawnerClock.restart();
+	}
+
+}
+
 //public staff
 Game::Game()
 {
@@ -68,11 +80,7 @@ Game::~Game()
 		delete i.second;
 		i.second = nullptr;
 	}
-	//delete all armies
-	for (auto& i : this->enemyArmy) {
-		delete i;
-		i = nullptr;
-	}
+
 
 
 }
@@ -101,8 +109,11 @@ void Game::update()
 	//update turrets
 	this->gWorld.updateTurrets(this->enemyArmy);
 
-	this->tempArmy->update(this->gWorld.roadRects());
+	for (auto& i : this->enemyArmy) {
+		i.update(this->gWorld.roadRects());
+	}
 
+	this->spawnArmy();
 
 }
 
@@ -129,7 +140,9 @@ void Game::render()
 	this->gWorld.render(*this->window);
 
 	//armies
-	this->tempArmy->render(*this->window);
+	for (auto& i : this->enemyArmy) {
+		i.render(*this->window);
+	}
 
 	//gui stuff
 	this->window->draw(this->GUIback);

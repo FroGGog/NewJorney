@@ -322,12 +322,12 @@ void gameWorld::update(sf::Window& window)
 
 }
 
-void gameWorld::updateTurrets(std::vector<army*>& enemy_armies)
+void gameWorld::updateTurrets(std::vector<army>& enemy_armies)
 {
 	for (auto& i : this->turrets) {
-		i.update(enemy_armies[0]->getPos());
+		i.update(enemy_armies);
 	}
-	return;
+	
 }
 
 

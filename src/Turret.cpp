@@ -48,8 +48,10 @@ sf::FloatRect Turret::getBounds()
 	return this->sprite.getGlobalBounds();
 }
 
-void Turret::update(sf::Vector2f _enemyPos)
+void Turret::update(std::vector<army>& enemy_armies)
 {
+	sf::Vector2f _enemyPos = this->findClosestEnemy(enemy_armies);
+
 	//rotation system
 
 	float angle = atan2((_enemyPos.y + 2.5f) - this->sprite.getPosition().y, (_enemyPos.x + 2.5f) - this->sprite.getPosition().x) * 180 / 3.14;
@@ -64,6 +66,8 @@ void Turret::update(sf::Vector2f _enemyPos)
 		i.update();
 	}
 
+	this->updateOutProjectiles();
+
 
 }
 
@@ -77,14 +81,10 @@ void Turret::render(sf::RenderTarget& target)
 
 }
 
-void Turret::updateRotation()
-{
-
-	this->sprite.rotate(2.f);
-}
 
 void Turret::shoot(sf::Vector2f _enemyPos)
 {
+	
 	this->reloadTime = this->reloadClock.getElapsedTime();
 
 	if (this->reloadTime.asSeconds() > .5f) {
@@ -101,5 +101,40 @@ void Turret::shoot(sf::Vector2f _enemyPos)
 
 	}
 
+}
+
+void Turret::updateOutProjectiles()
+{
+	//if projectile out of screen border - delete it
+	for (int i{ 0 }; i < this->projectiles.size(); i++) {
+		if (this->projectiles[i].getState() == projectile_state::OUT) {
+			this->projectiles.erase(this->projectiles.begin() + i);
+		}
+	}
+}
+
+sf::Vector2f Turret::findClosestEnemy(std::vector<army>& enemy_armies)
+{
+	float ShortestDistance = 10000;
+	float tempDistance = 0;
+	sf::Vector2f enemyPosition;
+
+	for (auto& i : enemy_armies) {
+		
+		tempDistance = this->calculateDistance(i.getPos());
+		if (tempDistance < ShortestDistance) {
+			enemyPosition = i.getPos();
+			ShortestDistance = tempDistance;
+		}
+	}
+	return enemyPosition;
+	
+}
+
+float Turret::calculateDistance(sf::Vector2f enemyPos)
+{
+	float distance = sqrt(abs(pow(enemyPos.x - this->sprite.getPosition().x, 2) + pow(enemyPos.y - this->sprite.getPosition().y, 2)));
+
+	return distance;
 }
 

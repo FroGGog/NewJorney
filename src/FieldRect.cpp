@@ -15,6 +15,11 @@ FieldRect::turn_type FieldRect::getTurn() const
 	return this->turn_side;
 }
 
+sf::FloatRect FieldRect::getGBounds() const
+{
+	return this->rect.getGlobalBounds();
+}
+
 sf::RectangleShape FieldRect::getShape() const
 {
 	return this->rect;

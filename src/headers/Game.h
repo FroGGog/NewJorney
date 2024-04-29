@@ -15,7 +15,7 @@ private:
 	sf::Event GameEvents;
 
 	std::map<std::string, sf::Texture*> textures;
-	std::vector<army*> enemyArmy;
+	std::vector<army> enemyArmy;
 
 	gameWorld gWorld;
 
@@ -32,6 +32,11 @@ private:
 	void InitVars();
 	void InitWindow();
 	void InitGui();
+
+	//TODO : for test - delete
+	sf::Clock spawnerClock;
+	sf::Time spawnerTime;
+	void spawnArmy();
 
 
 public:

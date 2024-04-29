@@ -84,7 +84,7 @@ public:
 	std::vector<FieldRect*> roadRects() const;
 
 	void update(sf::Window& window);
-	void updateTurrets(std::vector<army*>& enemy_armies);
+	void updateTurrets(std::vector<army>& enemy_armies);
 
 	void render(sf::RenderTarget& target);
 	void renderButtons(sf::RenderTarget& target);

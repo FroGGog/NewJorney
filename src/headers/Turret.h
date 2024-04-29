@@ -1,6 +1,7 @@
 #pragma once
 #include "../stdafx.h"
 #include "Projectile.h"
+#include "army.h"
 
 enum turret_type { ARROW };
 
@@ -23,8 +24,10 @@ private:
 	//for scale
 	float saved_x, saved_y;
 
-	void updateRotation();
 	void shoot(sf::Vector2f _enemyPos);
+	void updateOutProjectiles();
+	sf::Vector2f findClosestEnemy(std::vector<army>& enemy_armies);
+	float calculateDistance(sf::Vector2f enemyPos);
 
 public:
 
@@ -37,7 +40,7 @@ public:
 	sf::FloatRect getBounds();
 
 
-	void update(sf::Vector2f _enemyPos);
+	void update(std::vector<army>& enemy_armies);
 
 	void render(sf::RenderTarget& target);
 

@@ -13,6 +13,7 @@ public:
 	//accessors
 	FieldRect::f_type getType() const;
 	FieldRect::turn_type getTurn() const;
+	sf::FloatRect getGBounds() const;
 
 	sf::RectangleShape getShape() const;
 
