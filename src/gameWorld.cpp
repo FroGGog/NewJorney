@@ -20,10 +20,7 @@ void gameWorld::fillRectsV()
 				temp->setTexture(this->textures["GrassTile"], this->cal_x, this->cal_y);
 				temp->setType(FieldRect::f_type::GROUND);
 			}
-			//if rect is water
-			else if (j == "W") {
-				temp->setType(FieldRect::f_type::WATER);
-			}
+
 			//if rect is road part
 			else if (j == "R") {
 				temp->setTexture(this->textures["FieldTile"], this->cal_x, this->cal_y);
@@ -36,10 +33,6 @@ void gameWorld::fillRectsV()
 			//forest
 			else if(j == "F"){
 				temp->setType(FieldRect::f_type::FOREST);
-			}
-			//mountain
-			else if (j == "M") {
-				temp->setType(FieldRect::f_type::MOUNTAIN);
 			}
 			//right turn road
 			else if (j == "RTR") {
@@ -82,12 +75,18 @@ void gameWorld::fillRectsV()
 
 void gameWorld::fillWorld()
 {
-	for (int i{ 25 }; i > 0; i--) {
-		sf::Vector2f tempBushPos = { float(rand() % (this->screen_size.x - 10 + 1) + 10), float(rand() % (this->screen_size.y - 10 + 1) + 10) };
-		sf::Vector2f tempStonePos = { float(rand() % (this->screen_size.x - 10 + 1) + 10), float(rand() % (this->screen_size.y - 10 + 1) + 10) };
+	// TODO : change pos (bushes and stones can't be places on water)
+	for (int i{ 30 }; i > 0; i--) {
+		sf::Vector2f tempBushPos = { float(rand() % ((this->screen_size.x - 300) - 10 + 1) + 10),
+			float(rand() % ((this->screen_size.y - 50)  - 10 + 1) + 10) };
+		sf::Vector2f tempStonePos = { float(rand() % ((this->screen_size.x - 50) - 10 + 1) + 10),
+			float(rand() % ((this->screen_size.y - 50) - 10 + 1) + 10) };
 
 		std::shared_ptr<sf::Sprite> tempBush = std::make_shared<sf::Sprite>( *this->textures["Bush"]);
 		std::shared_ptr<sf::Sprite> tempStone = std::make_shared<sf::Sprite>(*this->textures["Stone"]);;
+
+		tempBush->setPosition(tempBushPos);
+		tempStone->setPosition(tempStonePos);
 
 		this->worldSprites.push_back(tempBush);
 		this->worldSprites.push_back(tempStone);
@@ -237,7 +236,7 @@ bool gameWorld::build(sf::Texture& _toBuild, bool turret)
 	//if player tryies to build on road or on city 
 	for (auto& i : this->worldRects) {
 		FieldRect::f_type tempType = i->getType();
-		if (tempType == FieldRect::f_type::CITY || tempType == FieldRect::f_type::ROAD || tempType == FieldRect::f_type::WATER) {
+		if (tempType == FieldRect::f_type::SPOINT || tempType == FieldRect::f_type::ROAD) {
 			if (this->saved_x == i->getShape()->getPosition().x && this->saved_y == i->getShape()->getPosition().y) {
 				return false;
 			}
@@ -415,33 +414,33 @@ void gameWorld::initWorldMap()
 	//G - ground
 	this->worldMap = {
 
-		{"G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","M","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G",},
-		{"G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","M","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G",},
-		{"G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","M","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G",},
-		{"G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","M","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G",},
-		{"G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","M","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G",},
-		{"G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","M","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G",},
-		{"G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","M","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G",},
-		{"G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","M","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G",},
-		{"G","G","G","G","RTR","R","R","R","R","R","R","R","R","R","R","R","R","R","RTD","M","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G",},
-		{"G","G","G","G","R","G","G","G","G","G","G","G","G","G","G","G","G","G","R","M","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G",},
-		{"G","G","G","G","RTU","R","RTL","G","G","G","G","G","G","G","G","G","G","G","R","M","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G",},
-		{"G","G","G","G","G","G","R","G","G","G","G","G","G","G","G","G","G","G","R","M","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G",},
-		{"G","G","G","G","G","G","R","G","G","G","G","G","G","G","G","G","G","G","R","M","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G",},
-		{"G","G","G","G","G","RTR","RTU","G","G","G","G","G","G","G","G","G","G","G","R","M","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G",},
+		{"G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G",},
+		{"G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G",},
+		{"G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G",},
+		{"G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G",},
+		{"G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G",},
+		{"G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G",},
+		{"G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G",},
+		{"G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G",},
+		{"G","G","G","G","RTR","R","R","R","R","R","R","R","R","R","R","R","R","R","RTD","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G",},
+		{"G","G","G","G","R","G","G","G","G","G","G","G","G","G","G","G","G","G","R","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G",},
+		{"G","G","G","G","RTU","R","RTL","G","G","G","G","G","G","G","G","G","G","G","R","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G",},
+		{"G","G","G","G","G","G","R","G","G","G","G","G","G","G","G","G","G","G","R","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G",},
+		{"G","G","G","G","G","G","R","G","G","G","G","G","G","G","G","G","G","G","R","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G",},
+		{"G","G","G","G","G","RTR","RTU","G","G","G","G","G","G","G","G","G","G","G","R","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G",},
 		{"G","G","SP","G","G","R","G","G","G","G","G","G","G","G","G","G","G","G","RTR","R","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","C","G",},
-		{"G","G","R","G","G","R","G","G","G","G","G","G","G","G","G","G","G","G","G","M","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G",},
-		{"G","G","RTR","R","R","RTU","G","G","G","G","G","G","G","G","G","G","G","G","G","M","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G",},
-		{"G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","M","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G",},
-		{"G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","M","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G",},
-		{"G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","M","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G",},
-		{"G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","M","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G",},
-		{"G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","M","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G",},
-		{"G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","M","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G",},
-		{"G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","M","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G",},
-		{"G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","M","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G",},
-		{"G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","M","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G",},
-		{"G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","M","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G",},
-		{"G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","M","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G",}
+		{"G","G","R","G","G","R","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G",},
+		{"G","G","RTR","R","R","RTU","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G",},
+		{"G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G",},
+		{"G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G",},
+		{"G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G",},
+		{"G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G",},
+		{"G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G",},
+		{"G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G",},
+		{"G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G",},
+		{"G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G",},
+		{"G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G",},
+		{"G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G",},
+		{"G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G"}
 	};
 }

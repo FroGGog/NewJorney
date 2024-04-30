@@ -5,7 +5,7 @@ class FieldRect
 {
 // TODO : change rects to sprites
 public:
-	enum f_type { GROUND, FOREST, ROAD, CITY, WATER, MOUNTAIN, SPOINT, NONE};
+	enum f_type { GROUND, FOREST, ROAD, CITY, SPOINT, NONE};
 	enum turn_type{LEFT, RIGHT, UP, DOWN, NONETURN};
 
 	FieldRect(f_type _r_type, turn_type _turn = NONETURN);
