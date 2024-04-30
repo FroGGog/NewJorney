@@ -6,6 +6,16 @@ The main idea is simple - tower defence. Build barrack, farms, mines
 or sawmill, create armies and attack your opponets.
 
 ## Updates  
+### v 1.0.5
+- Projectiles now can collide with enemies
+- Projectiles now can attack enemies on hit
+- Enemies now can die
+- Changed some projectile properties
+- Started removing rects and change them on sprites
+- Started creating turrets area of shooting
+- Created world fill mechanics(world now will be filled with stones and bushes)
+- Bug fixes
+
 ### v 1.0.4
 - Turrets now can shoot enemies
 - Turrest choose closest enemy to them

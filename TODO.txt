@@ -1,7 +1,3 @@
-1)Complete map
-1.1)Decide - one long map you vs spawn enemies
-1.2)or you spawn units and enemy. destroy enemy castle
-
 2)Create towers - proccess
 2.1) Add more tower types
 
