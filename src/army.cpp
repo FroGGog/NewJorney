@@ -21,7 +21,6 @@ army::army(sf::Vector2f size, sf::Vector2f start_pos, sf::Color _color)
 
 army::army()
 {
-	// TODO : bug with this, when there are 0 enemy units on filed 
 	this->speed = 2.f;
 	this->moveDir = sf::Vector2f{ 0.f, this->speed };
 	this->movingSide = m_side::DOWN;

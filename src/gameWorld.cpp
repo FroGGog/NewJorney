@@ -12,68 +12,64 @@ void gameWorld::fillRectsV()
 
 	for (auto& i : this->worldMap) {
 		for (auto& j : i) {
-			//init rectangle
-			sf::RectangleShape temp_shape{ sf::Vector2f(cal_x, cal_y) };
-			temp_shape.setPosition(temp_x, temp_y);
 
-			std::shared_ptr<FieldRect> temp = std::make_shared<FieldRect>( temp_shape, FieldRect::NONE );
+			std::shared_ptr<FieldRect> temp = std::make_shared<FieldRect>(FieldRect::f_type::NONE);
 
-			//check if player clicked on any rect in game
-			
 			//if rect is ground
 			if (j == "G") {
-				temp->setColor(sf::Color(153, 255, 153, 255));
+				temp->setTexture(this->textures["GrassTile"], this->cal_x, this->cal_y);
 				temp->setType(FieldRect::f_type::GROUND);
 			}
 			//if rect is water
 			else if (j == "W") {
-				temp->setColor(sf::Color(50, 50, 255, 255));
 				temp->setType(FieldRect::f_type::WATER);
 			}
 			//if rect is road part
 			else if (j == "R") {
-				temp->setColor(sf::Color(152, 126, 96, 255));
+				temp->setTexture(this->textures["FieldTile"], this->cal_x, this->cal_y);
 				temp->setType(FieldRect::f_type::ROAD);
 			}
 			//if rect is city
 			else if (j == "C") {
-				temp->setColor(sf::Color(255, 255, 102, 255));
 				temp->setType(FieldRect::f_type::CITY);
 			}
 			//forest
 			else if(j == "F"){
-				temp->setColor(sf::Color(0, 51, 25, 255));
 				temp->setType(FieldRect::f_type::FOREST);
 			}
 			//mountain
 			else if (j == "M") {
-				temp->setColor(sf::Color(128, 128, 128, 255));
 				temp->setType(FieldRect::f_type::MOUNTAIN);
 			}
 			//right turn road
 			else if (j == "RTR") {
-				temp->setColor(sf::Color(152, 126, 96, 255));
+				temp->setTexture(this->textures["FieldTile"], this->cal_x, this->cal_y);
 				temp->setType(FieldRect::f_type::ROAD);
 				temp->setTurnType(FieldRect::turn_type::RIGHT);
 			}
 			//left turn road
 			else if (j == "RTL") {
-				temp->setColor(sf::Color(152, 126, 96, 255));
+				temp->setTexture(this->textures["FieldTile"], this->cal_x, this->cal_y);
 				temp->setType(FieldRect::f_type::ROAD);
 				temp->setTurnType(FieldRect::turn_type::LEFT);
 			}
 			//up turn road
 			else if (j == "RTD") {
-				temp->setColor(sf::Color(152, 126, 96, 255));
+				temp->setTexture(this->textures["FieldTile"], this->cal_x, this->cal_y);
 				temp->setType(FieldRect::f_type::ROAD);
 				temp->setTurnType(FieldRect::turn_type::DOWN);
 			}
 			//down turn road
 			else if (j == "RTU") {
-				temp->setColor(sf::Color(152, 126, 96, 255));
+				temp->setTexture(this->textures["FieldTile"], this->cal_x, this->cal_y);
 				temp->setType(FieldRect::f_type::ROAD);
 				temp->setTurnType(FieldRect::turn_type::UP);
 			}
+			else if (j == "SP") {
+				temp->setType(FieldRect::f_type::SPOINT);
+				temp->setTurnType(FieldRect::turn_type::DOWN);
+			}
+			temp->setPos(sf::Vector2f{ temp_x, temp_y });
 
 			this->worldRects.push_back(temp);
 			temp_x += this->cal_x;
@@ -84,9 +80,27 @@ void gameWorld::fillRectsV()
 	
 }
 
+void gameWorld::fillWorld()
+{
+	for (int i{ 25 }; i > 0; i--) {
+		sf::Vector2f tempBushPos = { float(rand() % (this->screen_size.x - 10 + 1) + 10), float(rand() % (this->screen_size.y - 10 + 1) + 10) };
+		sf::Vector2f tempStonePos = { float(rand() % (this->screen_size.x - 10 + 1) + 10), float(rand() % (this->screen_size.y - 10 + 1) + 10) };
+
+		std::shared_ptr<sf::Sprite> tempBush = std::make_shared<sf::Sprite>( *this->textures["Bush"]);
+		std::shared_ptr<sf::Sprite> tempStone = std::make_shared<sf::Sprite>(*this->textures["Stone"]);;
+
+		this->worldSprites.push_back(tempBush);
+		this->worldSprites.push_back(tempStone);
+
+	}
+
+}
+
 void gameWorld::initVars()
 {
 	this->clicked = false;
+	this->cal_x = 0;
+	this->cal_y = 0;
 
 	this->temp_incomeFood = 1;
 	this->temp_incomeGold = 1;
@@ -138,6 +152,24 @@ void gameWorld::initTextures()
 		return;
 	}
 
+	//ground and etc
+	// TODO : add textures load
+	this->textures["FieldTile"] = std::shared_ptr<sf::Texture>(new sf::Texture());
+	if (!this->textures["FieldTile"]->loadFromFile("src/pics/field/FieldsTile.png")) {
+		std::cout << "ERROR:LOADFROMFILE:PICTURE:FieldsTile.png\n";
+	}
+	this->textures["GrassTile"] = std::shared_ptr<sf::Texture>(new sf::Texture());
+	if (!this->textures["GrassTile"]->loadFromFile("src/pics/field/GrassTile.png")) {
+		std::cout << "ERROR:LOADFROMFILE:PICTURE:GrassTile.png\n";
+	}
+	this->textures["Bush"] = std::shared_ptr<sf::Texture>(new sf::Texture());
+	if (!this->textures["Bush"]->loadFromFile("src/pics/field/bush.png")) {
+		std::cout << "ERROR:LOADFROMFILE:PICTURE:bush.png\n";
+	}
+	this->textures["Stone"] = std::shared_ptr<sf::Texture>(new sf::Texture());
+	if (!this->textures["Stone"]->loadFromFile("src/pics/field/stone.png")) {
+		std::cout << "ERROR:LOADFROMFILE:PICTURE:stone.png\n";
+	}
 
 	//turrets textures
 	this->textures["bowTurret"] = std::shared_ptr<sf::Texture>(new sf::Texture());
@@ -187,17 +219,17 @@ void gameWorld::checkButtonCollision()
 bool gameWorld::build(sf::Texture& _toBuild, bool turret)
 {
 	bool canBuild = true;
-	sf::Sprite newBuilding{ _toBuild };
-	newBuilding.setPosition(this->saved_x, this->saved_y);
+	std::shared_ptr<sf::Sprite> newBuilding = std::make_shared<sf::Sprite>( _toBuild );
+	newBuilding->setPosition(this->saved_x, this->saved_y);
 	//if player tryies to build on same spot multiple time
 	for (auto& sprite : this->worldSprites) {
-		if (sprite.getGlobalBounds().contains(newBuilding.getPosition())) {
+		if (sprite->getGlobalBounds().contains(newBuilding->getPosition())) {
 			return false;
 		}
 	}
 	//if player tryies to place more than one turret on same rect
 	for (auto& i : this->turrets) {
-		if (i.getBounds().contains(newBuilding.getPosition())) {
+		if (i.getBounds().contains(newBuilding->getPosition())) {
 			return false;
 		}
 	}
@@ -206,13 +238,13 @@ bool gameWorld::build(sf::Texture& _toBuild, bool turret)
 	for (auto& i : this->worldRects) {
 		FieldRect::f_type tempType = i->getType();
 		if (tempType == FieldRect::f_type::CITY || tempType == FieldRect::f_type::ROAD || tempType == FieldRect::f_type::WATER) {
-			if (this->saved_x == i->getShape().getPosition().x && this->saved_y == i->getShape().getPosition().y) {
+			if (this->saved_x == i->getShape()->getPosition().x && this->saved_y == i->getShape()->getPosition().y) {
 				return false;
 			}
 		}
 	}
 	//if all is ok build structure
-	newBuilding.setScale(this->cal_x / this->goldMineT.getSize().x, this->cal_y / this->goldMineT.getSize().y);
+	newBuilding->setScale(this->cal_x / this->goldMineT.getSize().x, this->cal_y / this->goldMineT.getSize().y);
 	if (turret) {
 		Turret temp{ this->textures["bowTurret"], this->textures["bowProjectile"], turret_type::ARROW};
 		temp.setPos(sf::Vector2f{ this->saved_x + temp.getSprite().getGlobalBounds().width / 7, this->saved_y + temp.getSprite().getGlobalBounds().height / 7});
@@ -243,8 +275,10 @@ void gameWorld::CalculateIncome()
 
 }
 
-gameWorld::gameWorld()
+gameWorld::gameWorld(sf::Vector2u _screen_size)
 {
+	this->screen_size = _screen_size;
+
 	this->initTextures();
 
 	this->initWorldMap();
@@ -253,12 +287,8 @@ gameWorld::gameWorld()
 
 	this->fillRectsV();
 
-}
+	this->fillWorld();
 
-
-void gameWorld::getScreenSize(sf::Vector2i _screen_size)
-{
-	this->screen_size = _screen_size;
 }
 
 
@@ -279,7 +309,17 @@ std::map <std::string, int> gameWorld::getResources() const
 
 std::vector<int> gameWorld::getIncome() const
 {
+	// TODO : fix income 
 	return std::vector<int>{this->temp_incomeGold, this->temp_incomeWood, this->temp_incomeFood};
+}
+
+sf::Vector2f gameWorld::getSpawnPos() const
+{
+	for (auto& i : this->worldRects) {
+		if (i->getType() == FieldRect::f_type::SPOINT) {
+			return i->getGBounds().getPosition();
+		}
+	}
 }
 
 std::vector<std::shared_ptr<FieldRect>> gameWorld::roadRects() const
@@ -319,10 +359,10 @@ void gameWorld::updateTurrets(std::vector<std::shared_ptr<army>> enemy_armies)
 void gameWorld::updateTshape()
 {
 	for (auto& i : this->worldRects) {
-		if (this->Tshape.getGlobalBounds().intersects(i->getShape().getGlobalBounds())) {
+		if (this->Tshape.getGlobalBounds().intersects(i->getShape()->getGlobalBounds())) {
 			//std::cout << this->choosedSprite.getPosition().x << ' ' << this->choosedSprite.getPosition().y << '\n';
-			this->saved_x = i->getShape().getGlobalBounds().getPosition().x;
-			this->saved_y = i->getShape().getGlobalBounds().getPosition().y;
+			this->saved_x = i->getShape()->getGlobalBounds().getPosition().x;
+			this->saved_y = i->getShape()->getGlobalBounds().getPosition().y;
 			this->choosedSprite.setPosition(sf::Vector2f{ this->saved_x, this->saved_y });
 			//supprots window change
 			this->choosedSprite.setScale(this->cal_x / this->choosedTexture.getSize().x, this->cal_y / this->choosedTexture.getSize().y);
@@ -345,12 +385,12 @@ void gameWorld::render(sf::RenderTarget& target)
 {
 
 	for (auto& i : this->worldRects) {
-		target.draw(i->getShape());
+		target.draw(*(i->getShape()));
 		
 	}	
 
 	for (auto& i : this->worldSprites) {
-		target.draw(i);
+		target.draw(*i);
 	}
 
 	for (auto& i : this->turrets) {
@@ -369,12 +409,6 @@ void gameWorld::renderButtons(sf::RenderTarget& target) const
 	target.draw(this->button1);
 	target.draw(this->button2);
 }
-
-void gameWorld::initGameField()
-{
-	this->fillRectsV();
-}
-
 
 void gameWorld::initWorldMap()
 {
@@ -395,7 +429,7 @@ void gameWorld::initWorldMap()
 		{"G","G","G","G","G","G","R","G","G","G","G","G","G","G","G","G","G","G","R","M","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G",},
 		{"G","G","G","G","G","G","R","G","G","G","G","G","G","G","G","G","G","G","R","M","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G",},
 		{"G","G","G","G","G","RTR","RTU","G","G","G","G","G","G","G","G","G","G","G","R","M","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G",},
-		{"G","C","R","G","G","R","G","G","G","G","G","G","G","G","G","G","G","G","RTR","R","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","C","G",},
+		{"G","G","SP","G","G","R","G","G","G","G","G","G","G","G","G","G","G","G","RTR","R","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","C","G",},
 		{"G","G","R","G","G","R","G","G","G","G","G","G","G","G","G","G","G","G","G","M","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G",},
 		{"G","G","RTR","R","R","RTU","G","G","G","G","G","G","G","G","G","G","G","G","G","M","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G",},
 		{"G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","M","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G","G",},

@@ -8,11 +8,15 @@ enum turret_type { ARROW };
 class Turret
 {
 private:
+	// TODO : add turet shoot range
 
 	std::vector<std::shared_ptr<Projectile>> projectiles;
 
 	std::shared_ptr<sf::Texture> projectileTexture;
 	sf::Sprite sprite;
+
+	sf::CircleShape radiusShape;
+	float radius;
 	
 	sf::Clock reloadClock;
 	sf::Time reloadTime;

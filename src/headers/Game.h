@@ -16,7 +16,7 @@ private:
 
 	std::vector<std::shared_ptr<army>> enemyArmy;
 
-	gameWorld gWorld;
+	std::unique_ptr<gameWorld> gWorld;
 
 	GameStats gameStats;
 

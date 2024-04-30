@@ -23,9 +23,7 @@ void Game::InitWindow()
 	this->window = std::make_shared<sf::RenderWindow>(this->vMode, "New Jorney", sf::Style::Resize | sf::Style::Close);
 	this->window->setFramerateLimit(60);
 
-	//game world stuff
-	this->gWorld.getScreenSize(sf::Vector2i(this->screen_x, this->screen_y));
-	this->gWorld.initGameField();
+	this->gWorld = std::make_unique<gameWorld>(this->window->getSize());
 	
 
 }
@@ -33,25 +31,25 @@ void Game::InitWindow()
 void Game::InitGui()
 {
 
-	this->GUIback = sf::RectangleShape{ sf::Vector2f{float(this->screen_x - this->gWorld.getWorldEnd()), float(this->screen_y)} };
+	this->GUIback = sf::RectangleShape{ sf::Vector2f{float(this->screen_x - this->gWorld->getWorldEnd()), float(this->screen_y)} };
 	this->blackStroke = sf::RectangleShape{ sf::Vector2f{5.f, float(this->screen_y)} };
 
 	this->GUIback.setFillColor(sf::Color{ 135,130,111,255 });
-	this->GUIback.setPosition(this->gWorld.getWorldEnd(), 0);
+	this->GUIback.setPosition(this->gWorld->getWorldEnd(), 0);
 
 	this->blackStroke.setFillColor(sf::Color::Black);
-	this->blackStroke.setPosition(this->gWorld.getWorldEnd(), 0);
+	this->blackStroke.setPosition(this->gWorld->getWorldEnd(), 0);
 }
 
 void Game::spawnArmy()
 {
 	this->spawnerTime = this->spawnerClock.getElapsedTime();
 
-	if (this->spawnerTime.asSeconds() > 0.1f) {
+	if (this->spawnerTime.asSeconds() > 2.5f) {
 
 		this->enemyCount++;
 
-		army tempArm{ sf::Vector2f{25.f,25.f}, sf::Vector2f{50,364}, sf::Color::Green };
+		army tempArm{ sf::Vector2f{25.f,25.f}, this->gWorld->getSpawnPos(), sf::Color::Green};
 
 		this->enemyArmy.push_back(std::make_shared<army>(tempArm));
 
@@ -95,30 +93,27 @@ void Game::update()
 	this->gameStats.update();
 
 	//set recources from gameStats to gameWorld class
-	this->gWorld.setResources(this->gameStats.getResources());
+	this->gWorld->setResources(this->gameStats.getResources());
 
 	//update gameWorld
-	this->gWorld.update(*this->window);
+	this->gWorld->update(*this->window);
 	
 	//set resources to game stats
-	this->gameStats.setResources(this->gWorld.getResources());
+	this->gameStats.setResources(this->gWorld->getResources());
 
 	//recieve income from buildings from gameWorld class
-	this->gameStats.getIncome(this->gWorld.getIncome());
+	this->gameStats.getIncome(this->gWorld->getIncome());
 
 	//update turrets (update only when enemies on field)
-	if (this->enemyCount > 0) {
-		this->gWorld.updateTurrets(this->enemyArmy);
-	}
+	this->gWorld->updateTurrets(this->enemyArmy);
 
 	for (auto& i : this->enemyArmy) {
-		i->update(this->gWorld.roadRects());
+		i->update(this->gWorld->roadRects());
 	}
 
 	if (this->enemyCount < 10) {
 		this->spawnArmy();
 	}
-	
 
 	//check if any enemies died
 	this->updateEnemiesList();
@@ -145,7 +140,7 @@ void Game::render()
 	this->window->clear();
 
 	//game world
-	this->gWorld.render(*this->window);
+	this->gWorld->render(*this->window);
 
 	//armies
 	for (auto& i : this->enemyArmy) {
@@ -157,7 +152,7 @@ void Game::render()
 	this->window->draw(this->blackStroke);
 
 	//buttons
-	this->gWorld.renderButtons(*this->window);  
+	this->gWorld->renderButtons(*this->window);  
 
 	//other stuff
 	this->gameStats.render(*this->window);

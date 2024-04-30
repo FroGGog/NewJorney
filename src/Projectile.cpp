@@ -60,8 +60,9 @@ void Projectile::update(std::shared_ptr<army> checkArmy)
 
 	this->updateBorderCollision();
 
-	//
-	this->updateEnemyCollision(checkArmy);
+	if (checkArmy != nullptr) {
+		this->updateEnemyCollision(checkArmy);
+	}
 
 }
 

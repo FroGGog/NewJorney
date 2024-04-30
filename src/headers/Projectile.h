@@ -17,7 +17,6 @@ protected:
 
 	projectile_state state;
 
-	// TODO : Add damamge and other projectile params
 	int damage;
 
 	void updateBorderCollision();

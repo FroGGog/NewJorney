@@ -13,7 +13,7 @@ private:
 
 	std::vector<std::shared_ptr<FieldRect>> worldRects;
 
-	std::vector<sf::Sprite> worldSprites;
+	std::vector<std::shared_ptr<sf::Sprite>> worldSprites;
 
 	std::vector<Buildings> buildings;
 	std::vector<Turret> turrets;
@@ -32,7 +32,7 @@ private:
 	//mouse check shape
 	sf::RectangleShape Tshape;
 
-	sf::Vector2i screen_size;
+	sf::Vector2u screen_size;
 
 	//gui
 	sf::Texture choosedTexture;
@@ -50,6 +50,8 @@ private:
 
 	//fill game field based on world string vector
 	void fillRectsV();
+	//with stones and bushes
+	void fillWorld();
 
 	void initWorldMap();
 	void initVars();
@@ -70,13 +72,14 @@ private:
 
 public:
 
-	gameWorld();
+	gameWorld(sf::Vector2u _screen_size);
 
-	void getScreenSize(sf::Vector2i _screen_size);
 	int getWorldEnd() const;
 	void setResources(std::map <std::string, int> _res);
 	std::map <std::string,int> getResources() const;
 	std::vector<int> getIncome() const;
+
+	sf::Vector2f getSpawnPos() const;
 
 	//get all road and city rects from worldRects
 	std::vector<std::shared_ptr<FieldRect>> roadRects() const;
@@ -86,8 +89,5 @@ public:
 
 	void render(sf::RenderTarget& target);
 	void renderButtons(sf::RenderTarget& target) const;
-
-	void initGameField();
-
 
 };

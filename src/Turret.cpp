@@ -12,10 +12,21 @@ Turret::Turret(std::shared_ptr<sf::Texture> _texture, std::shared_ptr<sf::Textur
 
 	this->attackSpeed = 1.f;
 	this->rotationSpeed = 0.89f;
-	this->saved_x = 5;
-	this->saved_y = 5;
+	this->saved_x = 5.f;
+	this->saved_y = 5.f;
 
 	this->type = _type;
+	this->radius = 0.f;
+
+	switch (this->type)
+	{
+	case turret_type::ARROW:
+		this->radius = 20.f;
+		this->radiusShape = sf::CircleShape{ this->radius };
+		break;
+	default:
+		break;
+	}
 
 }
 
@@ -29,6 +40,8 @@ sf::Sprite Turret::getSprite() const
 void Turret::setPos(sf::Vector2f _newPos)
 {
 	this->sprite.setPosition(_newPos);
+	this->radiusShape.setOrigin(this->sprite.getOrigin());
+	this->radiusShape.setPosition(this->sprite.getPosition());
 }
 
 void Turret::setScale(float x, float y)
@@ -48,14 +61,16 @@ void Turret::update(std::vector<std::shared_ptr<army>> enemy_armies)
 	//pointer to closest enemy for turret
 	std::shared_ptr<army> _enemyArmy = this->findClosestEnemy(enemy_armies);
 
-	//rotation system
-	float angle = atan2((_enemyArmy->getPos().y + 2.5f) - this->sprite.getPosition().y,
-		(_enemyArmy->getPos().x + 2.5f) - this->sprite.getPosition().x) * 180 / 3.14;
+	if (_enemyArmy != nullptr) {
+		//rotation system
+		float angle = atan2((_enemyArmy->getPos().y + 2.5f) - this->sprite.getPosition().y,
+			(_enemyArmy->getPos().x + 2.5f) - this->sprite.getPosition().x) * 180 / 3.14;
 
-	this->sprite.setRotation(angle);
+		this->sprite.setRotation(angle);
 
-	//shoot system
-	this->shoot(_enemyArmy->getPos());
+		//shoot system
+		this->shoot(_enemyArmy->getPos());
+	}
 
 	//update projectiles
 	for (auto& i : this->projectiles) {
@@ -77,6 +92,8 @@ void Turret::render(sf::RenderTarget& target)
 	for (auto& i : this->projectiles) {
 		i->render(target);
 	}
+
+	target.draw(this->radiusShape);
 
 }
 
@@ -137,6 +154,9 @@ void Turret::updateHitProjectiles()
 
 std::shared_ptr<army> Turret::findClosestEnemy(std::vector<std::shared_ptr<army>> enemy_armies)
 {
+	if (enemy_armies.size() == 0) {
+		return nullptr;
+	}
 
 	float ShortestDistance = 10000;
 	float tempDistance = 0;
