@@ -25,8 +25,11 @@ private:
 	float saved_x, saved_y;
 
 	void shoot(sf::Vector2f _enemyPos);
+
 	void updateOutProjectiles();
-	sf::Vector2f findClosestEnemy(std::vector<army>& enemy_armies);
+	void updateHitProjectiles();
+
+	std::shared_ptr<army> findClosestEnemy(std::vector<std::shared_ptr<army>> enemy_armies);
 	float calculateDistance(sf::Vector2f enemyPos);
 
 public:
@@ -39,7 +42,7 @@ public:
 	sf::FloatRect getBounds();
 
 
-	void update(std::vector<army>& enemy_armies);
+	void update(std::vector<std::shared_ptr<army>> enemy_armies);
 
 	void render(sf::RenderTarget& target);
 

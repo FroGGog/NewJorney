@@ -8,8 +8,7 @@ void Game::InitVars()
 
 	this->drawFirstTime = true;
 
-	//775 y 50 city dest pos
-	// road start pos 225 50
+	this->enemyCount = 0;
 
 }
 
@@ -48,13 +47,26 @@ void Game::spawnArmy()
 {
 	this->spawnerTime = this->spawnerClock.getElapsedTime();
 
-	if (this->spawnerTime.asSeconds() > 1.5f) {
+	if (this->spawnerTime.asSeconds() > 0.1f) {
+
+		this->enemyCount++;
 
 		army tempArm{ sf::Vector2f{25.f,25.f}, sf::Vector2f{50,364}, sf::Color::Green };
 
-		this->enemyArmy.push_back(tempArm);
+		this->enemyArmy.push_back(std::make_shared<army>(tempArm));
 
 		this->spawnerClock.restart();
+	}
+
+}
+
+void Game::updateEnemiesList()
+{
+	for (int i{ 0 }; i < this->enemyArmy.size(); i++) {
+		if (!this->enemyArmy[i]->isAlive()) {
+			this->enemyArmy.erase(this->enemyArmy.begin() + i);
+			this->enemyCount--;
+		}
 	}
 
 }
@@ -82,22 +94,34 @@ void Game::update()
 
 	this->gameStats.update();
 
+	//set recources from gameStats to gameWorld class
 	this->gWorld.setResources(this->gameStats.getResources());
 
+	//update gameWorld
 	this->gWorld.update(*this->window);
 	
+	//set resources to game stats
 	this->gameStats.setResources(this->gWorld.getResources());
 
+	//recieve income from buildings from gameWorld class
 	this->gameStats.getIncome(this->gWorld.getIncome());
 
-	//update turrets
-	this->gWorld.updateTurrets(this->enemyArmy);
-
-	for (auto& i : this->enemyArmy) {
-		i.update(this->gWorld.roadRects());
+	//update turrets (update only when enemies on field)
+	if (this->enemyCount > 0) {
+		this->gWorld.updateTurrets(this->enemyArmy);
 	}
 
-	this->spawnArmy();
+	for (auto& i : this->enemyArmy) {
+		i->update(this->gWorld.roadRects());
+	}
+
+	if (this->enemyCount < 10) {
+		this->spawnArmy();
+	}
+	
+
+	//check if any enemies died
+	this->updateEnemiesList();
 
 }
 
@@ -125,7 +149,7 @@ void Game::render()
 
 	//armies
 	for (auto& i : this->enemyArmy) {
-		i.render(*this->window);
+		i->render(*this->window);
 	}
 
 	//gui stuff

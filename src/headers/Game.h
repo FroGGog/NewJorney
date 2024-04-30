@@ -14,7 +14,7 @@ private:
 	std::shared_ptr<sf::RenderWindow> window;
 	sf::Event GameEvents;
 
-	std::vector<army> enemyArmy;
+	std::vector<std::shared_ptr<army>> enemyArmy;
 
 	gameWorld gWorld;
 
@@ -25,6 +25,7 @@ private:
 	sf::RectangleShape blackStroke;
 
 	bool drawFirstTime;
+	int enemyCount;
 
 	void InitVars();
 	void InitWindow();
@@ -35,6 +36,7 @@ private:
 	sf::Time spawnerTime;
 	void spawnArmy();
 
+	void updateEnemiesList();
 
 public:
 	//constructor and dest

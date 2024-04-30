@@ -19,20 +19,46 @@ army::army(sf::Vector2f size, sf::Vector2f start_pos, sf::Color _color)
 
 }
 
+army::army()
+{
+	// TODO : bug with this, when there are 0 enemy units on filed 
+	this->speed = 2.f;
+	this->moveDir = sf::Vector2f{ 0.f, this->speed };
+	this->movingSide = m_side::DOWN;
+
+	this->hp = 100;
+	this->alive = true;
+}
+
 
 void army::setMoveDir(sf::Vector2f _moveDir)
 {
 	this->moveDir = _moveDir;
 }
 
-sf::Vector2f army::getPos()
+sf::Vector2f army::getPos() const
 {
 	return this->shape.getPosition();
 }
 
-sf::FloatRect army::getGlobalBounds()
+sf::FloatRect army::getGlobalBounds() const
 {
 	return this->shape.getGlobalBounds();
+}
+
+bool army::isAlive() const
+{
+	return this->alive;
+}
+
+void army::gotHit(int hp)
+{
+	this->hp -= hp;
+
+	if (this->hp <= 0) {
+		this->hp = 0;
+		this->alive = false;
+	}
 }
 
 
@@ -42,8 +68,7 @@ void army::update(std::vector<std::shared_ptr<FieldRect>> _roads)
 
 	this->updateTurnCollsion(_roads);
 
-
-	// TODO : create death system
+	// TODO : delete enemy if he is on last road of level
 	if (this->shape.getPosition().x > 500.f) {
 		this->alive = false;
 	}

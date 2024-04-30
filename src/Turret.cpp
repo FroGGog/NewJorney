@@ -43,26 +43,30 @@ sf::FloatRect Turret::getBounds()
 	return this->sprite.getGlobalBounds();
 }
 
-void Turret::update(std::vector<army>& enemy_armies)
+void Turret::update(std::vector<std::shared_ptr<army>> enemy_armies)
 {
-	sf::Vector2f _enemyPos = this->findClosestEnemy(enemy_armies);
+	//pointer to closest enemy for turret
+	std::shared_ptr<army> _enemyArmy = this->findClosestEnemy(enemy_armies);
 
 	//rotation system
-
-	float angle = atan2((_enemyPos.y + 2.5f) - this->sprite.getPosition().y, (_enemyPos.x + 2.5f) - this->sprite.getPosition().x) * 180 / 3.14;
+	float angle = atan2((_enemyArmy->getPos().y + 2.5f) - this->sprite.getPosition().y,
+		(_enemyArmy->getPos().x + 2.5f) - this->sprite.getPosition().x) * 180 / 3.14;
 
 	this->sprite.setRotation(angle);
 
 	//shoot system
-	this->shoot(_enemyPos);
+	this->shoot(_enemyArmy->getPos());
 
 	//update projectiles
 	for (auto& i : this->projectiles) {
-		i->update();
+		i->update(_enemyArmy);
 	}
 
+	//check if projectile out of borders
 	this->updateOutProjectiles();
 
+	//check if projectiles hit enemy army
+	this->updateHitProjectiles();
 
 }
 
@@ -91,6 +95,15 @@ void Turret::shoot(sf::Vector2f _enemyPos)
 
 		std::shared_ptr<Projectile> tempArrow = std::make_shared<Projectile>(ProjectileAngle, projectile_stPos , this->projectileTexture);
 
+		switch (this->type)
+		{
+		case turret_type::ARROW:
+			tempArrow->setDamage(25);
+			break;
+		default:
+			break;
+		}
+
 		tempArrow->setScale(this->saved_x, this->saved_y);
 		
 		this->projectiles.push_back(tempArrow);
@@ -111,21 +124,34 @@ void Turret::updateOutProjectiles()
 	}
 }
 
-sf::Vector2f Turret::findClosestEnemy(std::vector<army>& enemy_armies)
+void Turret::updateHitProjectiles()
 {
+	//if projectile hits enemy
+	for (int i{ 0 }; i < this->projectiles.size(); i++) {
+		if (this->projectiles[i]->getState() == projectile_state::HIT) {
+			this->projectiles.erase(this->projectiles.begin() + i);
+		}
+	}
+
+}
+
+std::shared_ptr<army> Turret::findClosestEnemy(std::vector<std::shared_ptr<army>> enemy_armies)
+{
+
 	float ShortestDistance = 10000;
 	float tempDistance = 0;
-	sf::Vector2f enemyPosition;
+	//if there are no closer enemy take first from list
+	std::shared_ptr<army> tempArmy = nullptr;
 
 	for (auto& i : enemy_armies) {
 		
-		tempDistance = this->calculateDistance(i.getPos());
+		tempDistance = this->calculateDistance(i->getPos());
 		if (tempDistance < ShortestDistance) {
-			enemyPosition = i.getPos();
+			tempArmy = i;
 			ShortestDistance = tempDistance;
 		}
 	}
-	return enemyPosition;
+	return tempArmy;
 	
 }
 

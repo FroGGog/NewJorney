@@ -1,5 +1,6 @@
 #pragma once
 #include "../stdafx.h"
+#include "army.h"
 
 enum projectile_state {NONE, HIT, OUT};
 
@@ -17,19 +18,20 @@ protected:
 	projectile_state state;
 
 	// TODO : Add damamge and other projectile params
+	int damage;
 
-	void updateCollision();
-	bool updateBorderCollision();
-	bool updateEnemyCollision();
+	void updateBorderCollision();
+	void updateEnemyCollision(std::shared_ptr<army> checkArmy);
 
 public:
 
 	Projectile(float r_degrees, sf::Vector2f start_pos, std::shared_ptr<sf::Texture> _texture);
 
 	void setScale(float x, float y);
+	void setDamage(int _damage);
 	projectile_state getState() const;
 
-	void update();
+	void update(std::shared_ptr<army> checkArmy);
 	
 
 	void render(sf::RenderTarget& target);

@@ -82,7 +82,7 @@ public:
 	std::vector<std::shared_ptr<FieldRect>> roadRects() const;
 
 	void update(sf::Window& window);
-	void updateTurrets(std::vector<army>& enemy_armies);
+	void updateTurrets(std::vector<std::shared_ptr<army>> enemy_armies);
 
 	void render(sf::RenderTarget& target);
 	void renderButtons(sf::RenderTarget& target) const;
