@@ -46,7 +46,7 @@ void Turret::setPos(sf::Vector2f _newPos)
 
 void Turret::setScale(float x, float y)
 {
-	this->sprite.setScale(x, y);
+	this->sprite.setScale(x - 0.05, y -0.05);
 	this->saved_x = x;
 	this->saved_y = y;
 }
@@ -93,7 +93,7 @@ void Turret::render(sf::RenderTarget& target)
 		i->render(target);
 	}
 
-	target.draw(this->radiusShape);
+	//target.draw(this->radiusShape);
 
 }
 
@@ -121,7 +121,7 @@ void Turret::shoot(sf::Vector2f _enemyPos)
 			break;
 		}
 
-		tempArrow->setScale(this->saved_x, this->saved_y);
+		tempArrow->setScale(this->saved_x, this->saved_y, this->projectileTexture);
 		
 		this->projectiles.push_back(tempArrow);
 

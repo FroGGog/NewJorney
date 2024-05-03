@@ -14,6 +14,7 @@ private:
 	std::vector<std::shared_ptr<FieldRect>> worldRects;
 
 	std::vector<std::shared_ptr<sf::Sprite>> worldSprites;
+	std::vector<std::shared_ptr<sf::Sprite>> backGroundSprites;
 
 	std::vector<Buildings> buildings;
 	std::vector<Turret> turrets;
@@ -22,7 +23,7 @@ private:
 
 	std::map < std::string, std::shared_ptr<sf::Texture>> textures;
 
-	GMine mine1;
+	std::shared_ptr<FieldRect> chooseRect;
 
 	float saved_x, saved_y;
 	float cal_x, cal_y;

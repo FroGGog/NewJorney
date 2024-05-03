@@ -20,7 +20,7 @@ void Game::InitWindow()
 	this->vMode.width = this->screen_x;
 	this->vMode.height = this->screen_y;
 
-	this->window = std::make_shared<sf::RenderWindow>(this->vMode, "New Jorney", sf::Style::Resize | sf::Style::Close);
+	this->window = std::make_shared<sf::RenderWindow>(this->vMode, "New Journey", sf::Style::Resize | sf::Style::Close);
 	this->window->setFramerateLimit(60);
 
 	this->gWorld = std::make_unique<gameWorld>(this->window->getSize());
@@ -92,7 +92,7 @@ void Game::update()
 
 	this->gameStats.update();
 
-	//set recources from gameStats to gameWorld class
+	//set recourses from gameStats to gameWorld class
 	this->gWorld->setResources(this->gameStats.getResources());
 
 	//update gameWorld
@@ -101,7 +101,7 @@ void Game::update()
 	//set resources to game stats
 	this->gameStats.setResources(this->gWorld->getResources());
 
-	//recieve income from buildings from gameWorld class
+	//receive income from buildings from gameWorld class
 	this->gameStats.getIncome(this->gWorld->getIncome());
 
 	//update turrets (update only when enemies on field)

@@ -38,9 +38,9 @@ Projectile::Projectile(float r_degrees, sf::Vector2f start_pos, std::shared_ptr<
 
 }
 
-void Projectile::setScale(float x, float y)
+void Projectile::setScale(float x, float y, std::shared_ptr<sf::Texture> _texture)
 {
-	this->sprite.setScale(x / 5, y / 5);
+	this->sprite.setScale(x / 3, y / 3);
 }
 
 void Projectile::setDamage(int _damage)

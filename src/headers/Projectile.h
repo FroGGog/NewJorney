@@ -26,7 +26,7 @@ public:
 
 	Projectile(float r_degrees, sf::Vector2f start_pos, std::shared_ptr<sf::Texture> _texture);
 
-	void setScale(float x, float y);
+	void setScale(float x, float y, std::shared_ptr<sf::Texture> _texture);
 	void setDamage(int _damage);
 	projectile_state getState() const;
 

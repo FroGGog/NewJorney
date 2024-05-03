@@ -88,8 +88,8 @@ void gameWorld::fillWorld()
 		tempBush->setPosition(tempBushPos);
 		tempStone->setPosition(tempStonePos);
 
-		this->worldSprites.push_back(tempBush);
-		this->worldSprites.push_back(tempStone);
+		this->backGroundSprites.push_back(tempBush);
+		this->backGroundSprites.push_back(tempStone);
 
 	}
 
@@ -193,14 +193,14 @@ void gameWorld::checkButtonCollision()
 	//gold mine button
 	if (this->Tshape.getGlobalBounds().intersects(this->button1.getGlobalBounds()) && sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
 		GMine temp;
-		//check if enought res to build and space is't occupied
+		//check if enough res to build and space is not occupied
 		if (temp.checkEnoughtRes(this->resources["wood"], this->resources["gold"], this->resources["food"]) && this->build(*this->textures["gold_mine"])) {
 			temp.MinusCost(this->resources["gold"], this->resources["wood"], this->resources["food"]);
 			this->buildings.push_back(temp);
 			this->CalculateIncome();
 		}
 	}
-	//sawmil button
+	//sawmill button
 	else if (this->Tshape.getGlobalBounds().intersects(this->button2.getGlobalBounds()) && sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
 		SawMill temp;
 
@@ -220,20 +220,15 @@ bool gameWorld::build(sf::Texture& _toBuild, bool turret)
 	bool canBuild = true;
 	std::shared_ptr<sf::Sprite> newBuilding = std::make_shared<sf::Sprite>( _toBuild );
 	newBuilding->setPosition(this->saved_x, this->saved_y);
-	//if player tryies to build on same spot multiple time
+	//if player tries to build on same spot multiple time
 	for (auto& sprite : this->worldSprites) {
 		if (sprite->getGlobalBounds().contains(newBuilding->getPosition())) {
 			return false;
 		}
 	}
-	//if player tryies to place more than one turret on same rect
-	for (auto& i : this->turrets) {
-		if (i.getBounds().contains(newBuilding->getPosition())) {
-			return false;
-		}
-	}
+	
 
-	//if player tryies to build on road or on city 
+	//if player tries to build on road or on city 
 	for (auto& i : this->worldRects) {
 		FieldRect::f_type tempType = i->getType();
 		if (tempType == FieldRect::f_type::SPOINT || tempType == FieldRect::f_type::ROAD) {
@@ -242,17 +237,26 @@ bool gameWorld::build(sf::Texture& _toBuild, bool turret)
 			}
 		}
 	}
-	//if all is ok build structure
-	newBuilding->setScale(this->cal_x / this->goldMineT.getSize().x, this->cal_y / this->goldMineT.getSize().y);
+
+	//build turret
 	if (turret) {
 		Turret temp{ this->textures["bowTurret"], this->textures["bowProjectile"], turret_type::ARROW};
 		temp.setPos(sf::Vector2f{ this->saved_x + temp.getSprite().getGlobalBounds().width / 7, this->saved_y + temp.getSprite().getGlobalBounds().height / 7});
-		temp.setScale(this->cal_x / this->goldMineT.getSize().x, this->cal_y / this->goldMineT.getSize().y);
+		temp.setScale(this->cal_x / this->textures["bowTurret"]->getSize().x, this->cal_y / this->textures["bowTurret"]->getSize().y);
+
+		//if player tries to place more than one turret on same rect
+		for (auto& i : this->turrets) {
+			if (i.getBounds().getPosition() == temp.getBounds().getPosition()) {
+				return false;
+			}
+		}
 
 		this->turrets.push_back(temp);
 		return true;
 	}
 
+	//if all is ok build structure
+	newBuilding->setScale(this->cal_x / this->goldMineT.getSize().x, this->cal_y / this->goldMineT.getSize().y);
 	this->worldSprites.push_back(newBuilding);
 	return true;
 }
@@ -363,7 +367,8 @@ void gameWorld::updateTshape()
 			this->saved_x = i->getShape()->getGlobalBounds().getPosition().x;
 			this->saved_y = i->getShape()->getGlobalBounds().getPosition().y;
 			this->choosedSprite.setPosition(sf::Vector2f{ this->saved_x, this->saved_y });
-			//supprots window change
+			this->chooseRect = i;
+			//supports window change
 			this->choosedSprite.setScale(this->cal_x / this->choosedTexture.getSize().x, this->cal_y / this->choosedTexture.getSize().y);
 		}
 	}
@@ -392,6 +397,10 @@ void gameWorld::render(sf::RenderTarget& target)
 		target.draw(*i);
 	}
 
+	for (auto& i : this->backGroundSprites) {
+		target.draw(*i);
+	}
+
 	for (auto& i : this->turrets) {
 		i.render(target);
 	}
@@ -400,6 +409,7 @@ void gameWorld::render(sf::RenderTarget& target)
 	if (clicked) {
 		target.draw(this->choosedSprite);
 	}
+
 	
 }
 
